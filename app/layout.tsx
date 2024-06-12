@@ -2,7 +2,21 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+import { IBM_Plex_Sans } from 'next/font/google'
+import { Chivo } from 'next/font/google'
+import './styles.css'
+
+const ibm_plex_sans = IBM_Plex_Sans({
+  weight: ['400', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-ibm_plex_sans',
+})
+const chivo = Chivo({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-chivo',
+})
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,7 +30,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={ibm_plex_sans.variable + ' ' + chivo.variable}>
+        {children}
+      </body>
     </html>
   );
 }
