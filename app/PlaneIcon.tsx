@@ -1,4 +1,6 @@
-export default function PlaneIcon(props) {
+import React from 'react';
+
+export default function PlaneIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
