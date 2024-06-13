@@ -213,6 +213,87 @@ export default function Hotels() {
             className="h-full w-full object-cover transition-all duration-300 hover:scale-105"
           />
         </div>
+        <div className="overflow-hidden rounded-lg">
+          <Image
+            src={`${cloudinaryBaseURL}/v1718303596/IMG_6909_vusfdq.jpg`}
+            alt="Gallery Image"
+            width={350}
+            height={350}
+            className="h-full w-full object-cover transition-all duration-300 hover:scale-105"
+          />
+        </div>
+        <div className="overflow-hidden rounded-lg">
+          <Image
+            src={`${cloudinaryBaseURL}/v1718303598/IMG_6666_s3tbuk.jpg`}
+            alt="Gallery Image"
+            width={350}
+            height={350}
+            className="h-full w-full object-cover transition-all duration-300 hover:scale-105"
+          />
+        </div>
+        <div className="overflow-hidden rounded-lg">
+          <Image
+            src={`${cloudinaryBaseURL}/v1718303597/IMG_6525_hwpwot.jpg`}
+            alt="Gallery Image"
+            width={400}
+            height={400}
+            className="h-full w-full object-cover transition-all duration-300 hover:scale-105"
+          />
+        </div>
+        <div className="overflow-hidden rounded-lg">
+          <Image
+            src={`${cloudinaryBaseURL}/v1718303597/IMG_6693_cz4uyw.jpg`}
+            alt="Gallery Image"
+            width={450}
+            height={300}
+            className="h-full w-full object-cover transition-all duration-300 hover:scale-105"
+          />
+        </div>
+        <div className="overflow-hidden rounded-lg">
+          <Image
+            src={`${cloudinaryBaseURL}/v1718303592/9A5F48E9-2F22-4D92-94EC-E3A4C7B81526_ghcryg.jpg`}
+            alt="Gallery Image"
+            width={400}
+            height={400}
+            className="h-full w-full object-cover transition-all duration-300 hover:scale-105"
+          />
+        </div>
+        <div className="row-span-2 overflow-hidden rounded-lg">
+          <Image
+            src={`${cloudinaryBaseURL}/v1718303592/IMG_2587_nj792g.jpg`}
+            alt="Gallery Image"
+            width={600}
+            height={400}
+            className="h-full w-full object-cover transition-all duration-300 hover:scale-105"
+          />
+        </div>
+        <div className="overflow-hidden rounded-lg">
+          <Image
+            src={`${cloudinaryBaseURL}/v1718303590/IMG_6471_vhhvs1.jpg`}
+            alt="Gallery Image"
+            width={400}
+            height={300}
+            className="h-full w-full object-cover transition-all duration-300 hover:scale-105"
+          />
+        </div>
+        <div className="row-span-2 overflow-hidden rounded-lg">
+          <Image
+            src={`${cloudinaryBaseURL}/v1718303589/New_Project_2021-05-14_20_45_19_f8ey0v.jpg`}
+            alt="Gallery Image"
+            width={400}
+            height={500}
+            className="h-full w-full object-cover transition-all duration-300 hover:scale-105"
+          />
+        </div>
+        <div className="overflow-hidden rounded-lg">
+          <Image
+            src={`${cloudinaryBaseURL}/v1718303588/9A900618-914B-4015-9FEE-3349E3003146_lvgyjh.jpg`}
+            alt="Gallery Image"
+            width={350}
+            height={350}
+            className="h-full w-full object-cover transition-all duration-300 hover:scale-105"
+          />
+        </div>
       </div>
     </div>
   );
