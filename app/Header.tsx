@@ -14,11 +14,11 @@ export default function Header() {
       </Link>
       <nav className="ml-auto flex gap-4 sm:gap-6">
         <Link
-          href="/restaurants"
+          href="/travel"
           className="text-sm font-medium text-white hover:underline underline-offset-4"
           prefetch={false}
         >
-          Restaurants
+          Travel
         </Link>
         <Link
           href="/hotels"
@@ -28,11 +28,11 @@ export default function Header() {
           Hotels
         </Link>
         <Link
-          href="/travel"
+          href="/restaurants"
           className="text-sm font-medium text-white hover:underline underline-offset-4"
           prefetch={false}
         >
-          Travel
+          Restaurants
         </Link>
       </nav>
     </header>
