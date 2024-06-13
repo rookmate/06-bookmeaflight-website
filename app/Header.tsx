@@ -12,7 +12,6 @@ export default function Header() {
         <PlaneIcon className="h-5 w-5 text-white" />
         <span className="sr-only">Portfolio</span>
       </Link>
-      {/*
       <nav className="ml-auto flex gap-4 sm:gap-6">
         <Link
           href="/travel"
@@ -28,6 +27,7 @@ export default function Header() {
         >
           Hotels
         </Link>
+        {/*
         <Link
           href="/restaurants"
           className="text-sm font-medium text-white hover:underline underline-offset-4"
@@ -35,8 +35,8 @@ export default function Header() {
         >
           Restaurants
         </Link>
+        */}
       </nav>
-      */}
     </header>
   );
 }
