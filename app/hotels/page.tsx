@@ -1,9 +1,13 @@
+import Image from 'next/image';
+
+const cloudinaryBaseURL = 'https://res.cloudinary.com/your-cloud-name/image/upload';
+
 export default function Hotels() {
   return (
     <div className="container mx-auto px-4 py-12 md:px-6 lg:px-8">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         <div className="row-span-2 overflow-hidden rounded-lg">
-          <img
+          <Image
             src="/plane.png"
             alt="Gallery Image"
             width={600}
@@ -12,7 +16,7 @@ export default function Hotels() {
           />
         </div>
         <div className="overflow-hidden rounded-lg">
-          <img
+          <Image
             src="/plane.png"
             alt="Gallery Image"
             width={400}
@@ -21,7 +25,7 @@ export default function Hotels() {
           />
         </div>
         <div className="row-span-2 overflow-hidden rounded-lg">
-          <img
+          <Image
             src="/plane.png"
             alt="Gallery Image"
             width={400}
@@ -30,7 +34,7 @@ export default function Hotels() {
           />
         </div>
         <div className="overflow-hidden rounded-lg">
-          <img
+          <Image
             src="/plane.png"
             alt="Gallery Image"
             width={350}
@@ -39,7 +43,7 @@ export default function Hotels() {
           />
         </div>
         <div className="overflow-hidden rounded-lg">
-          <img
+          <Image
             src="/plane.png"
             alt="Gallery Image"
             width={400}
@@ -48,7 +52,7 @@ export default function Hotels() {
           />
         </div>
         <div className="row-span-2 overflow-hidden rounded-lg">
-          <img
+          <Image
             src="/plane.png"
             alt="Gallery Image"
             width={600}
@@ -57,7 +61,7 @@ export default function Hotels() {
           />
         </div>
         <div className="overflow-hidden rounded-lg">
-          <img
+          <Image
             src="/plane.png"
             alt="Gallery Image"
             width={450}
@@ -66,7 +70,7 @@ export default function Hotels() {
           />
         </div>
         <div className="overflow-hidden rounded-lg">
-          <img
+          <Image
             src="/plane.png"
             alt="Gallery Image"
             width={400}
