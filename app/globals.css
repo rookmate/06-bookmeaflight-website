@@ -38,3 +38,15 @@ h1, h2, h3, h4, h5, h6 {
     text-wrap: balance;
   }
 }
+
+.transition-transform {
+  transition: transform 0.3s ease-in-out;
+}
+
+.translate-y-0 {
+  transform: translateY(0);
+}
+
+.-translate-y-full {
+  transform: translateY(-100%);
+}
