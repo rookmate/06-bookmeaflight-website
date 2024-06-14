@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import PlaneIcon from "./PlaneIcon";
-import { Bars3Icon } from '@heroicons/react/24/outline';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -39,15 +38,8 @@ export default function Header() {
         prefetch={false}
       >
         <PlaneIcon className="h-5 w-5 text-white" />
-        <span className="sr-only">Portfolio</span>
+        <span className="ml-2 text-white text-sm font-medium md:hidden">Bookmeaflight</span>
       </Link>
-
-      {/* Hamburger Menu Icon */}
-      <div className="ml-auto md:hidden">
-        <button onClick={toggleMenu} className="text-white focus:outline-none">
-          <Bars3Icon className="h-6 w-6" />
-        </button>
-      </div>
 
       {/* Navigation Links */}
       <nav className="ml-auto hidden md:flex gap-4 sm:gap-6">
@@ -60,12 +52,18 @@ export default function Header() {
       </nav>
 
       {/* Dropdown Menu for Mobile */}
+      <div className="ml-auto md:hidden">
+        <button onClick={toggleMenu} className="text-white text-sm font-medium focus:outline-none">
+          Portfolio
+        </button>
+      </div>
+
       {isMenuOpen && (
-        <div className="absolute top-full left-0 w-full bg-gray-900/50 backdrop-blur-sm flex flex-col items-center md:hidden">
-          <Link href="/travel" className="text-sm font-medium text-white hover:underline underline-offset-4 py-2 w-full text-center border-t border-gray-700" prefetch={false}>
+        <div className="absolute top-full right-0 bg-gray-900/50 backdrop-blur-sm flex flex-col items-center md:hidden">
+          <Link href="/travel" className="text-sm font-medium text-white hover:underline underline-offset-4 px-6 py-2 w-full text-center border-t border-gray-700" prefetch={false}>
             Travel
           </Link>
-          <Link href="/hotels" className="text-sm font-medium text-white hover:underline underline-offset-2 py-2 w-full text-center border-t border-gray-700" prefetch={false}>
+          <Link href="/hotels" className="text-sm font-medium text-white hover:underline underline-offset-2 px-6 py-2 w-full text-center border-t border-gray-700" prefetch={false}>
             Hotels
           </Link>
           {/* Add more links as needed */}
