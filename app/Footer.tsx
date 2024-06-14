@@ -1,6 +1,4 @@
 import Link from "next/link";
-import InstagramIcon from "./InstagramIcon";
-import EmailIcon from "./EmailIcon";
 
 export default function Footer() {
   return (
