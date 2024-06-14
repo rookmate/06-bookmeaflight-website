@@ -3,7 +3,7 @@ import GalleryImage from '../GalleryImage.tsx';
 export default function Travel() {
   return (
     <div className="container mx-auto px-4 py-12 md:px-6 lg:px-8">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-3 gap-4 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4">
         <GalleryImage
           src={`v1718303777/IMG_0490_o4uuy3.jpg`}
           width={600}

@@ -11,7 +11,12 @@ interface GalleryImageProps {
 const GalleryImage: React.FC<GalleryImageProps> = ({ src, width, height }) => {
   return (
     <div className="overflow-hidden rounded-lg">
-      <Image src={`${cloudinaryBaseURL}/${src}`} width={width} height={height} alt="by Bookmeaflight"/>
+      <Image
+        src={`${cloudinaryBaseURL}/${src}`}
+        width={width}
+        height={height}
+        alt="by Bookmeaflight"
+      />
     </div>
   );
 };
