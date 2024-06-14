@@ -20,6 +20,7 @@ export default function Header() {
       const currentScrollY = window.pageYOffset;
       if (currentScrollY > lastScrollY) {
         setScrollDirection("down");
+        setIsMenuOpen(false);
       } else {
         setScrollDirection("up");
       }
