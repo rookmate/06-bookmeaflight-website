@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PlaneIcon from "./PlaneIcon";
 import { Bars3Icon } from '@heroicons/react/24/outline';
 
@@ -12,9 +12,31 @@ export default function Header() {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const [scrollDirection, setScrollDirection] = useState("up");
+
+  useEffect(() => {
+    let lastScrollY = window.pageYOffset;
+    const handleScroll = () => {
+      const currentScrollY = window.pageYOffset;
+      if (currentScrollY > lastScrollY) {
+        setScrollDirection("down");
+      } else {
+        setScrollDirection("up");
+      }
+      lastScrollY = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <header className="fixed top-0 left-0 w-full z-10 bg-gray-900/50 backdrop-blur-sm px-4 lg:px-6 h-10 flex items-center">
-      <Link href="/" className="flex items-center justify-center" prefetch={false}>
+    <header className={`fixed top-0 left-0 w-full z-10 bg-gray-900/50 backdrop-blur-sm px-4 lg:px-6 h-10 flex items-center transition-transform duration-300 ${scrollDirection === "down" ? "-translate-y-full" : "translate-y-0"}`}>
+      <Link
+        href="/"
+        className="flex items-center justify-center"
+        prefetch={false}
+      >
         <PlaneIcon className="h-5 w-5 text-white" />
         <span className="sr-only">Portfolio</span>
       </Link>
