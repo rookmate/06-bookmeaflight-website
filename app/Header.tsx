@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import PlaneIcon from "./PlaneIcon";
+import PlaneIcon from "./components/PlaneIcon";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -38,7 +38,7 @@ export default function Header() {
         prefetch={false}
       >
         <PlaneIcon className="h-5 w-5 text-white" />
-        <span className="ml-2 text-white text-sm font-medium md:hidden">Bookmeaflight</span>
+        <span className="ml-2 text-white text-sm font-medium">Bookmeaflight</span>
       </Link>
 
       {/* Navigation Links */}

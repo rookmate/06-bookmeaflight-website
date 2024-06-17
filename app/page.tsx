@@ -1,6 +1,6 @@
 import Link from "next/link";
-import InstagramIcon from "./InstagramIcon";
-import EmailIcon from "./EmailIcon";
+import InstagramIcon from "./components/InstagramIcon";
+import EmailIcon from "./components/EmailIcon";
 
 export default function Home() {
   return (
