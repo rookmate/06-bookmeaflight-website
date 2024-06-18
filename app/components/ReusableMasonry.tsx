@@ -1,7 +1,6 @@
 import Image from "next/image";
-import PropTypes from 'prop-types';
 import Masonry from 'react-masonry-css';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 const cloudinaryBaseURL = 'https://res.cloudinary.com/dnwbkkjpo/image/upload';
 
@@ -13,18 +12,22 @@ interface ReusableMasonryProps {
   images: string[];
 }
 
-
 export default function ReusableMasonry({ images }: ReusableMasonryProps) {
   const [windowWidth, setWindowWidth] = useState(0);
+  const [visibleImages, setVisibleImages] = useState<string[]>([]);
+  const observer = useRef<IntersectionObserver | null>(null);
+  const lastImageRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
-
     handleResize(); // Set initial width
     window.addEventListener('resize', handleResize);
-
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  useEffect(() => {
+    setVisibleImages(images.slice(0, 8));
+  }, [images]);
 
   const breakpointColumnsObj = {
     default: 4,
@@ -38,6 +41,33 @@ export default function ReusableMasonry({ images }: ReusableMasonryProps) {
     return pick([300, 350, 400]);
   };
 
+  const loadMoreImages = useCallback(() => {
+    setVisibleImages((prevVisibleImages) => {
+      const nextVisibleImages = images.slice(prevVisibleImages.length, prevVisibleImages.length + 8);
+      return [...prevVisibleImages, ...nextVisibleImages];
+    });
+  }, [images]);
+
+  useEffect(() => {
+    if (observer.current) observer.current.disconnect();
+
+    observer.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && visibleImages.length < images.length) {
+        loadMoreImages();
+      }
+    });
+
+    const currentObserver = observer.current;
+
+    if (lastImageRef.current) {
+      currentObserver.observe(lastImageRef.current);
+    }
+
+    return () => {
+      currentObserver.disconnect();
+    };
+  }, [loadMoreImages, visibleImages.length, images.length]);
+
   return (
     <div className="container mx-auto px-4 py-12 md:px-6 lg:px-8">
       <Masonry
@@ -45,28 +75,28 @@ export default function ReusableMasonry({ images }: ReusableMasonryProps) {
         className="flex w-auto -mx-2 md:-mx-4"
         columnClassName="px-2"
       >
-        {images.map((src, index) => (
-          <div
-            key={index}
-            className="relative mb-4"
-            style={{
-              height: getDynamicHeight(),
-            }}
-          >
-            <Image
-              src={`${cloudinaryBaseURL}/${src}`}
-              alt={`by Bookmeaflight`}
-              fill
-              style={{ objectFit: 'cover' }}
-              className="absolute inset-0 w-full h-full"
-            />
-          </div>
-        ))}
+        {visibleImages.map((src, index) => {
+          const isLastImage = index === visibleImages.length - 1;
+          return (
+            <div
+              key={index}
+              className="relative mb-4"
+              style={{
+                height: getDynamicHeight(),
+              }}
+              ref={isLastImage ? lastImageRef : null}
+            >
+              <Image
+                src={`${cloudinaryBaseURL}/${src}`}
+                alt={`Image by Bookmeaflight`}
+                fill
+                style={{ objectFit: 'cover' }}
+                className="absolute inset-0 w-full h-full"
+              />
+            </div>
+          );
+        })}
       </Masonry>
     </div>
   );
 }
-
-ReusableMasonry.propTypes = {
-  images: PropTypes.array.isRequired,
-};
