@@ -1,8 +1,8 @@
 import Image from "next/image";
-import Masonry from 'react-masonry-css';
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import Masonry from "react-masonry-css";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 
-const cloudinaryBaseURL = 'https://res.cloudinary.com/dnwbkkjpo/image/upload';
+const cloudinaryBaseURL = "https://res.cloudinary.com/dnwbkkjpo/image/upload";
 
 export function pick(arr: number[]): number {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -12,8 +12,8 @@ interface ReusableMasonryProps {
   images: string[];
 }
 
-export default function ReusableMasonry({ images }: ReusableMasonryProps) {
-  const [windowWidth, setWindowWidth] = useState(0);
+const ReusableMasonry: React.FC<ReusableMasonryProps> = ({ images }) => {
+  const [windowWidth, setWindowWidth] = useState<number>(0);
   const [visibleImages, setVisibleImages] = useState<string[]>([]);
   const observer = useRef<IntersectionObserver | null>(null);
   const lastImageRef = useRef<HTMLDivElement | null>(null);
@@ -21,8 +21,8 @@ export default function ReusableMasonry({ images }: ReusableMasonryProps) {
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     handleResize(); // Set initial width
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
@@ -43,7 +43,10 @@ export default function ReusableMasonry({ images }: ReusableMasonryProps) {
 
   const loadMoreImages = useCallback(() => {
     setVisibleImages((prevVisibleImages) => {
-      const nextVisibleImages = images.slice(prevVisibleImages.length, prevVisibleImages.length + 8);
+      const nextVisibleImages = images.slice(
+        prevVisibleImages.length,
+        prevVisibleImages.length + 8
+      );
       return [...prevVisibleImages, ...nextVisibleImages];
     });
   }, [images]);
@@ -99,4 +102,6 @@ export default function ReusableMasonry({ images }: ReusableMasonryProps) {
       </Masonry>
     </div>
   );
-}
+};
+
+export default ReusableMasonry;
