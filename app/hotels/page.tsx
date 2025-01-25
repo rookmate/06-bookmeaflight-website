@@ -1,3 +1,5 @@
+"use client"
+
 import ImageChapter from "../components/ImageChapter"
 export default function Brands() {
   const cloudinaryBaseURL = "https://res.cloudinary.com/dnwbkkjpo/image/upload";
