@@ -1,7 +1,6 @@
 import Image from "next/image"
 
 interface ImageChapterProps {
-  title: string
   images: {
     src: string
     alt: string
