@@ -41,19 +41,16 @@ export default function Header() {
         <span className="ml-2 text-white text-sm font-medium">Bookmeaflight</span>
       </Link>
 
-      {/* Navigation Links
-      <nav className="ml-auto hidden md:flex gap-4 sm:gap-6">
-        <Link href="/travel" className="text-sm font-medium text-white hover:underline underline-offset-4" prefetch={false}>
-          Travel
-        </Link>
-        <Link href="/hotels" className="text-sm font-medium text-white hover:underline underline-offset-4" prefetch={false}>
-          Hotels
-        </Link>
-      </nav> */}
       <nav className="ml-auto hidden md:flex gap-4 sm:gap-6">
         <Link href="/brands" className="text-sm font-medium text-white hover:underline underline-offset-4" prefetch={false}>
           Fashion
         </Link>
+        <Link href="/hotels" className="text-sm font-medium text-white hover:underline underline-offset-4" prefetch={false}>
+          Hotels
+        </Link>
+        {/* <Link href="/travel" className="text-sm font-medium text-white hover:underline underline-offset-4" prefetch={false}>
+          Travel
+        </Link> */}
       </nav>
 
       {/* Dropdown Menu for Mobile */}
