@@ -1,7 +1,7 @@
 "use client"
 
 import ImageChapter from "../components/ImageChapter"
-export default function Brands() {
+export default function Hotels() {
   const cloudinaryBaseURL = "https://res.cloudinary.com/dnwbkkjpo/image/upload";
 
   const chapterData = {
