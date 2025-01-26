@@ -14,9 +14,9 @@ export default function Header() {
   const [scrollDirection, setScrollDirection] = useState("up");
 
   useEffect(() => {
-    let lastScrollY = window.pageYOffset;
+    let lastScrollY = window.scrollY;
     const handleScroll = () => {
-      const currentScrollY = window.pageYOffset;
+      const currentScrollY = window.scrollY;
       if (currentScrollY > lastScrollY) {
         setScrollDirection("down");
         setIsMenuOpen(false);
@@ -42,15 +42,15 @@ export default function Header() {
       </Link>
 
       <nav className="ml-auto hidden md:flex gap-4 sm:gap-6">
-        <Link href="/brands" className="text-sm font-medium text-white hover:underline underline-offset-4" prefetch={false}>
-          Fashion
-        </Link>
         <Link href="/hotels" className="text-sm font-medium text-white hover:underline underline-offset-4" prefetch={false}>
           Hotels
         </Link>
-        {/* <Link href="/travel" className="text-sm font-medium text-white hover:underline underline-offset-4" prefetch={false}>
-          Travel
-        </Link> */}
+        <Link href="/brands" className="text-sm font-medium text-white hover:underline underline-offset-4" prefetch={false}>
+          Fashion
+        </Link>
+        <Link href="/restaurants" className="text-sm font-medium text-white hover:underline underline-offset-4" prefetch={false}>
+          Restaurants
+        </Link>
       </nav>
 
       {/* Dropdown Menu for Mobile */}
@@ -62,13 +62,15 @@ export default function Header() {
 
       {isMenuOpen && (
         <div className="absolute top-full right-0 bg-gray-900/50 backdrop-blur-sm flex flex-col items-center md:hidden">
-          <Link href="/brands" className="text-sm font-medium text-white hover:underline underline-offset-4 px-6 py-2 w-full text-center border-t border-gray-700" prefetch={false}>
-            Brands
-          </Link>
           <Link href="/hotels" className="text-sm font-medium text-white hover:underline underline-offset-2 px-6 py-2 w-full text-center border-t border-gray-700" prefetch={false}>
             Hotels
           </Link>
-          {/* Add more links as needed */}
+          <Link href="/brands" className="text-sm font-medium text-white hover:underline underline-offset-4 px-6 py-2 w-full text-center border-t border-gray-700" prefetch={false}>
+            Fashion
+          </Link>
+          <Link href="/Restaurants" className="text-sm font-medium text-white hover:underline underline-offset-4 px-6 py-2 w-full text-center border-t border-gray-700" prefetch={false}>
+            Restaurants
+          </Link>
         </div>
       )}
     </header>
