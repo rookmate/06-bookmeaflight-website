@@ -16,6 +16,7 @@ export default function Brands() {
       { src: `${cloudinaryBaseURL}/q_auto,f_auto/v1737806061/mp-red-purse.jpg`, alt: "Red purse" },
       { src: `${cloudinaryBaseURL}/q_auto,f_auto/v1737806061/mp-red-purse2.jpg`, alt: "Red purse" },
       { src: `${cloudinaryBaseURL}/q_auto,f_auto/v1737806061/mp-red-purse3.jpg`, alt: "Red purse" },
+      { src: `${cloudinaryBaseURL}/q_auto,f_auto/v1737806061/rings-brand.jpg`, alt: "Rings" },
     ],
   }
 
