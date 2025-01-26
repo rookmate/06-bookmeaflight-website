@@ -68,7 +68,7 @@ export default function Header() {
           <Link href="/brands" className="text-sm font-medium text-white hover:underline underline-offset-4 px-6 py-2 w-full text-center border-t border-gray-700" prefetch={false}>
             Fashion
           </Link>
-          <Link href="/Restaurants" className="text-sm font-medium text-white hover:underline underline-offset-4 px-6 py-2 w-full text-center border-t border-gray-700" prefetch={false}>
+          <Link href="/restaurants" className="text-sm font-medium text-white hover:underline underline-offset-4 px-6 py-2 w-full text-center border-t border-gray-700" prefetch={false}>
             Restaurants
           </Link>
         </div>
