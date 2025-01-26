@@ -26,18 +26,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html lang="en">
-      <body
-        className={`${ibm_plex_sans.variable} ${chivo.variable} flex flex-col min-h-screen`}
-      >
+      <body className={`${ibm_plex_sans.variable} ${chivo.variable} flex flex-col min-h-screen`}>
         <Header />
         <main className="flex-grow">{children}</main>
         <Footer />
       </body>
     </html>
-  );
+  )
 }
