@@ -4,9 +4,9 @@ const cloudinaryBaseURL = "https://res.cloudinary.com/dnwbkkjpo/image/upload/q_a
 
 const tiles = [
   {
-    title: "Hotels",
+    title: "Hospitality",
     href: "/hotels",
-    bgImage: `${cloudinaryBaseURL}/v1737809793/ghh-pool.jpg`,
+    bgImage: `${cloudinaryBaseURL}/v1737809793/sof-room.jpg`,
   },
   {
     title: "Fashion",
@@ -14,7 +14,7 @@ const tiles = [
     bgImage: `${cloudinaryBaseURL}/v1737806060/mp-mustard-purse2.jpg`,
   },
   {
-    title: "Restaurants",
+    title: "Dining",
     href: "/restaurants",
     bgImage: `${cloudinaryBaseURL}/v1737841790/da-salad.jpg`,
   },
