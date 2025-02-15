@@ -9,12 +9,31 @@
 }
 
 .responsive-bg {
+  /* Mobile view (< 768px) - original homepage2b */
   background-image: url('https://res.cloudinary.com/dnwbkkjpo/image/upload/q_auto,f_auto/v1718299505/homepage2b.jpg');
+  background-position: center;
 }
 
-@media (min-width: 1024px) {
+@media (orientation: landscape) {
   .responsive-bg {
     background-image: url('https://res.cloudinary.com/dnwbkkjpo/image/upload/q_auto,f_auto/v1718299505/homepage2a.jpg');
+    background-position: center;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait){
+  /* Tablet view (768px-1023px) - cropped homepage2b */
+  .responsive-bg {
+    background-image: url('https://res.cloudinary.com/dnwbkkjpo/image/upload/q_auto,f_auto,c_crop,h_5121,y_750/v1718299505/homepage2b.jpg');
+    background-position: top;
+  }
+}
+
+@media (min-width: 1025px) {
+  /* Desktop view (≥ 1024px) - homepage2a */
+  .responsive-bg {
+    background-image: url('https://res.cloudinary.com/dnwbkkjpo/image/upload/q_auto,f_auto/v1718299505/homepage2a.jpg');
+    background-position: center;
   }
 }
 
