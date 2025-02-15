@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-1">
-        <section className="w-full h-[60vh] bg-[url('https://res.cloudinary.com/dnwbkkjpo/image/upload/q_auto,f_auto/v1718299505/homepage.jpg')] bg-cover bg-center">
+        <section className="w-full h-[60vh] bg-cover bg-center responsive-bg">
           <div className="w-full h-full bg-gray-900/50 flex flex-col items-center justify-center">
             <div className="text-center space-y-4 px-4 md:px-6">
               <h1 className="text-4xl font-bold text-white sm:text-5xl md:text-6xl lg:text-7xl">Bookmeaflight</h1>
