@@ -6,7 +6,7 @@ const tiles = [
   {
     title: "Hospitality",
     href: "/hotels",
-    bgImage: `${cloudinaryBaseURL}/v1737809793/sof-room.jpg`,
+    bgImage: `${cloudinaryBaseURL}/v1737809793/cdl-tub.jpg`,
   },
   {
     title: "Fashion",
@@ -16,7 +16,7 @@ const tiles = [
   {
     title: "Dining",
     href: "/restaurants",
-    bgImage: `${cloudinaryBaseURL}/v1737841790/da-salad.jpg`,
+    bgImage: `${cloudinaryBaseURL},c_crop,w_3024,h_2268,ar_4:3,y_1200/v1737841790/bisque-menu.jpg`,
   },
 ]
 
