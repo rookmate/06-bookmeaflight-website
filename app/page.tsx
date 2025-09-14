@@ -14,7 +14,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-gray-900/50 flex flex-col items-center justify-center">
             <div className="text-center space-y-4 px-4 md:px-6">
               <h1 className="text-4xl font-bold text-white sm:text-5xl md:text-6xl lg:text-7xl">Bookmeaflight</h1>
-              <p className="text-lg text-gray-300 max-w-[700px]">Travel & Lifestyle Content Creators</p>
+              <p className="text-lg text-gray-300 max-w-[700px]">Wellness Content Creators</p>
             </div>
             <div className="flex items-center gap-4 mt-4">
               <Link href="mailto:hello@bookmeaflight.eu" aria-label="Email" prefetch={false}>
