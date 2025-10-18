@@ -1,6 +1,6 @@
 "use client"
 
-import ImageChapter from "../components/ImageChapter"
+import ProgressiveImageChapter from "../components/ProgressiveImageChapter"
 
 export default function Restaurants() {
   const cloudinaryBaseURL = "https://res.cloudinary.com/dnwbkkjpo/image/upload/q_auto,f_auto";
@@ -50,7 +50,11 @@ export default function Restaurants() {
 
   return (
     <main className="min-h-screen bg-gray-100 py-12">
-      <ImageChapter images={chapterData.images} />
+      <ProgressiveImageChapter
+        images={chapterData.images}
+        criticalImageCount={8}
+        batchSize={10}
+      />
     </main>
   )
 }
