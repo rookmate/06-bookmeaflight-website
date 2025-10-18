@@ -1,6 +1,6 @@
 "use client"
 
-import ImageChapter from "../components/ImageChapter"
+import ProgressiveImageChapter from "../components/ProgressiveImageChapter"
 export default function Hotels() {
   const cloudinaryBaseURL = "https://res.cloudinary.com/dnwbkkjpo/image/upload/q_auto,f_auto";
 
@@ -93,7 +93,11 @@ export default function Hotels() {
 
   return (
     <main className="min-h-screen bg-gray-100 py-12">
-      <ImageChapter images={chapterData.images} />
+      <ProgressiveImageChapter
+        images={chapterData.images}
+        criticalImageCount={12}
+        batchSize={15}
+      />
     </main>
   )
 }

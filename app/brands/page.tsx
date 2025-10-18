@@ -1,6 +1,6 @@
 "use client"
 
-import ImageChapter from "../components/ImageChapter"
+import ProgressiveImageChapter from "../components/ProgressiveImageChapter"
 
 export default function Brands() {
   const cloudinaryBaseURL = "https://res.cloudinary.com/dnwbkkjpo/image/upload/q_auto,f_auto";
@@ -22,7 +22,11 @@ export default function Brands() {
 
   return (
     <main className="min-h-screen bg-gray-100 py-12">
-      <ImageChapter images={chapterData.images} />
+      <ProgressiveImageChapter
+        images={chapterData.images}
+        criticalImageCount={5}
+        batchSize={5}
+      />
     </main>
   )
 }
