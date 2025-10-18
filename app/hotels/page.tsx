@@ -20,7 +20,6 @@ export default function Hotels() {
       { src: `${cloudinaryBaseURL}/v1737809791/sof-room1.jpg`, alt: "SOF Room 1" },
       { src: `${cloudinaryBaseURL}/v1737809791/smt-table.jpg`, alt: "SMT Table" },
       { src: `${cloudinaryBaseURL}/v1737809791/cdl-chair.jpg`, alt: "CDL Chair" },
-      { src: `${cloudinaryBaseURL}/v1737809789/smh-pool.jpg`, alt: "SMH Pool" },
       { src: `${cloudinaryBaseURL}/v1737809789/sof-spa.jpg`, alt: "SOF Spa" },
       { src: `${cloudinaryBaseURL}/v1737809786/sof-sleep.jpg`, alt: "SOF Sleep" },
     ]
