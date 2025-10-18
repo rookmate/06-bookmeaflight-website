@@ -41,9 +41,6 @@ export default function Restaurants() {
       { src: `${cloudinaryBaseURL}/v1737842072/tej-lunch.jpg`, alt: "Tej Lunch" },
       { src: `${cloudinaryBaseURL}/v1737841785/rj-gyosa.jpg`, alt: "RJ Gyosa" },
       { src: `${cloudinaryBaseURL}/v1737841784/sg-churros1.jpg`, alt: "SG Churros 1" },
-      { src: `${cloudinaryBaseURL}/v1737842072/mh-lunch2.jpg`, alt: "MH Lunch 2" },
-
-      { src: `${cloudinaryBaseURL}/v1737842072/mh-lunch.jpg`, alt: "MH Lunch" },
       { src: `${cloudinaryBaseURL}/v1737841794/karater-dish.jpg`, alt: "Karater Dish" },
     ]
   }
