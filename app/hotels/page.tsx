@@ -10,7 +10,7 @@ export default function Hotels() {
       { src: `${cloudinaryBaseURL}/v1737809797/kanz-pool-room.jpg`, alt: "Luxury pool suite with panoramic views - premium accommodation that commands premium rates" },
       { src: `${cloudinaryBaseURL}/v1737809797/sh-view-couple.jpg`, alt: "Breathtaking ocean view from luxury suite - Instagram-worthy moment that drives bookings" },
       { src: `${cloudinaryBaseURL}/v1737809797/purnama-bed-poolview.jpg`, alt: "Private pool access from bedroom - unique selling proposition that differentiates from competitors" },
-      { src: `${cloudinaryBaseURL}/v1737809797/hb-hut.jpg`, alt: "Unique overwater bungalow design - distinctive accommodation that creates memorable guest experiences" },
+      { src: `${cloudinaryBaseURL}/v1760870189/hb-hut.jpg`, alt: "Unique overwater bungalow design - distinctive accommodation that creates memorable guest experiences" },
 
       // REVENUE MULTIPLIERS - Premium amenities that justify higher ADR and increase guest spend
       { src: `${cloudinaryBaseURL}/v1737809797/purnama-bath-pool.jpg`, alt: "Infinity bathtub overlooking private pool - premium amenity that supports luxury positioning and justifies 40% higher room rates" },
