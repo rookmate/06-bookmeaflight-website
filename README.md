@@ -19,9 +19,9 @@ Bookmeaflight is a wellness content creation brand that showcases curated experi
 
 ## Tech Stack
 
-- **Framework**: Next.js 14+ with App Router
+- **Framework**: Next.js 15 with App Router
 - **Styling**: Tailwind CSS
-- **Fonts**: IBM Plex Sans & Chivo (Google Fonts)
+- **Fonts**: System font stacks (no external font fetch at build time)
 - **Images**: Cloudinary for optimized image delivery
 - **Icons**: Custom SVG components
 - **Language**: TypeScript
@@ -32,7 +32,6 @@ Bookmeaflight is a wellness content creation brand that showcases curated experi
 app/
 ├── components/          # Reusable UI components
 │   ├── EmailIcon.tsx
-│   ├── ImageChapter.tsx
 │   ├── InstagramIcon.tsx
 │   ├── NavigationTiles.tsx
 │   └── PlaneIcon.tsx
@@ -66,6 +65,8 @@ app/
 - `npm run build` - Build for production
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint
+- `npm run typecheck` - Run TypeScript checks
+- `npm test` - Run Node test suite
 
 ## Contact
 

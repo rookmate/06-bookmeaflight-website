@@ -8,7 +8,7 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+    setIsMenuOpen((prev) => !prev);
   };
 
   const [scrollDirection, setScrollDirection] = useState("up");
@@ -55,20 +55,45 @@ export default function Header() {
 
       {/* Dropdown Menu for Mobile */}
       <div className="ml-auto md:hidden">
-        <button onClick={toggleMenu} className="text-white text-sm font-medium focus:outline-none">
+        <button
+          type="button"
+          onClick={toggleMenu}
+          aria-expanded={isMenuOpen}
+          aria-controls="mobile-portfolio-menu"
+          aria-label="Toggle portfolio menu"
+          className="text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+        >
           Portfolio
         </button>
       </div>
 
       {isMenuOpen && (
-        <div className="absolute top-full right-0 bg-gray-900/50 backdrop-blur-sm flex flex-col items-center md:hidden">
-          <Link href="/hotels" className="text-sm font-medium text-white hover:underline underline-offset-2 px-6 py-2 w-full text-center border-t border-gray-700" prefetch={false}>
+        <div
+          id="mobile-portfolio-menu"
+          className="absolute right-0 top-full flex flex-col items-center bg-gray-900/50 backdrop-blur-sm md:hidden"
+        >
+          <Link
+            href="/hotels"
+            className="w-full border-t border-gray-700 px-6 py-2 text-center text-sm font-medium text-white hover:underline underline-offset-2"
+            prefetch={false}
+            onClick={() => setIsMenuOpen(false)}
+          >
             Hospitality
           </Link>
-          <Link href="/brands" className="text-sm font-medium text-white hover:underline underline-offset-4 px-6 py-2 w-full text-center border-t border-gray-700" prefetch={false}>
+          <Link
+            href="/brands"
+            className="w-full border-t border-gray-700 px-6 py-2 text-center text-sm font-medium text-white hover:underline underline-offset-4"
+            prefetch={false}
+            onClick={() => setIsMenuOpen(false)}
+          >
             Fashion
           </Link>
-          <Link href="/restaurants" className="text-sm font-medium text-white hover:underline underline-offset-4 px-6 py-2 w-full text-center border-t border-gray-700" prefetch={false}>
+          <Link
+            href="/restaurants"
+            className="w-full border-t border-gray-700 px-6 py-2 text-center text-sm font-medium text-white hover:underline underline-offset-4"
+            prefetch={false}
+            onClick={() => setIsMenuOpen(false)}
+          >
             Dining
           </Link>
         </div>

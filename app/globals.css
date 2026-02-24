@@ -45,27 +45,15 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
-  font-family: var(--font-chivo), sans-serif;
+  font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-ibm_plex_sans), sans-serif;
+  font-family: "Gill Sans", "Trebuchet MS", "Segoe UI", sans-serif;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
-}
-
-.transition-transform {
-  transition: transform 0.3s ease-in-out;
-}
-
-.translate-y-0 {
-  transform: translateY(0);
-}
-
-.-translate-y-full {
-  transform: translateY(-100%);
 }
