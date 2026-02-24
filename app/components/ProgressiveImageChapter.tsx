@@ -1,7 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import ProgressiveImage from "./ProgressiveImage"
+import {
+    getTotalBatches,
+    getVisibleImages,
+    shouldAutoLoadMore
+} from "../../lib/gallery.mjs"
 
 interface ImageChapterProps {
     images: {
@@ -19,46 +24,50 @@ export default function ProgressiveImageChapter({
 }: ImageChapterProps) {
     const [loadedBatches, setLoadedBatches] = useState(1)
     const [isLoadingMore, setIsLoadingMore] = useState(false)
+    const loadMoreTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-    // Split images into critical and progressive batches
-    const criticalImages = images.slice(0, criticalImageCount)
     const progressiveImages = images.slice(criticalImageCount)
+    const totalBatches = getTotalBatches(images.length, criticalImageCount, batchSize)
+    const visibleImages = getVisibleImages(images, criticalImageCount, loadedBatches, batchSize)
 
-    // Calculate how many batches to show
-    const totalBatches = Math.ceil(progressiveImages.length / batchSize)
-    const visibleImages = [
-        ...criticalImages,
-        ...progressiveImages.slice(0, loadedBatches * batchSize)
-    ]
-
-    const loadMoreImages = () => {
+    const loadMoreImages = useCallback(() => {
         if (loadedBatches < totalBatches && !isLoadingMore) {
             setIsLoadingMore(true)
 
-            // Simulate a small delay for better UX
-            setTimeout(() => {
+            if (loadMoreTimeoutRef.current) {
+                clearTimeout(loadMoreTimeoutRef.current)
+            }
+
+            loadMoreTimeoutRef.current = setTimeout(() => {
                 setLoadedBatches(prev => prev + 1)
                 setIsLoadingMore(false)
+                loadMoreTimeoutRef.current = null
             }, 300)
         }
-    }
+    }, [isLoadingMore, loadedBatches, totalBatches])
 
-    // Auto-load more images when user scrolls near bottom
+    useEffect(() => {
+        return () => {
+            if (loadMoreTimeoutRef.current) {
+                clearTimeout(loadMoreTimeoutRef.current)
+            }
+        }
+    }, [])
+
     useEffect(() => {
         const handleScroll = () => {
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop
             const windowHeight = window.innerHeight
             const documentHeight = document.documentElement.scrollHeight
 
-            // Load more when user is 80% down the page
-            if (scrollTop + windowHeight >= documentHeight * 0.8) {
+            if (shouldAutoLoadMore(scrollTop, windowHeight, documentHeight)) {
                 loadMoreImages()
             }
         }
 
         window.addEventListener('scroll', handleScroll, { passive: true })
         return () => window.removeEventListener('scroll', handleScroll)
-    }, [loadedBatches, totalBatches, isLoadingMore])
+    }, [loadMoreImages])
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -69,15 +78,15 @@ export default function ProgressiveImageChapter({
                         key={`${image.src}-${index}`}
                         src={image.src}
                         alt={image.alt}
-                        priority={index < criticalImageCount} // First 10 images get priority
+                        priority={index < criticalImageCount}
                     />
                 ))}
             </div>
 
-            {/* Load More Button (fallback for manual loading) */}
             {loadedBatches < totalBatches && (
                 <div className="flex justify-center mt-8">
                     <button
+                        type="button"
                         onClick={loadMoreImages}
                         disabled={isLoadingMore}
                         className="px-6 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
@@ -88,7 +97,7 @@ export default function ProgressiveImageChapter({
                                 Loading more images...
                             </div>
                         ) : (
-                            `Load More Images (${progressiveImages.length - (loadedBatches * batchSize)} remaining)`
+                            `Load More Images (${Math.max(0, progressiveImages.length - (loadedBatches * batchSize))} remaining)`
                         )}
                     </button>
                 </div>

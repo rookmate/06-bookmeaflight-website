@@ -1,5 +1,3 @@
-import Link from "next/link"
-
 import NavigationTiles from "./components/NavigationTiles"
 import InstagramIcon from "./components/InstagramIcon"
 import EmailIcon from "./components/EmailIcon"
@@ -17,12 +15,17 @@ export default function Home() {
               <p className="text-lg text-gray-300 max-w-[700px]">Wellness Content Creators</p>
             </div>
             <div className="flex items-center gap-4 mt-4">
-              <Link href="mailto:hello@bookmeaflight.eu" aria-label="Email" prefetch={false}>
+              <a href="mailto:hello@bookmeaflight.eu" aria-label="Email">
                 <EmailIcon className="h-5 w-5 md:h-7 md:w-7 text-white hover:text-gray-200" />
-              </Link>
-              <Link href="https://instagram.com/bookmeaflight" aria-label="Instagram" prefetch={false}>
+              </a>
+              <a
+                href="https://instagram.com/bookmeaflight"
+                aria-label="Instagram"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <InstagramIcon className="h-5 w-5 md:h-7 md:w-7 text-white hover:text-gray-200" />
-              </Link>
+              </a>
             </div>
           </div>
         </section>
