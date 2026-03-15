@@ -1,7 +1,7 @@
 import ProgressiveImageChapter from "../components/ProgressiveImageChapter"
 
-export default function Brands() {
-  const cloudinaryBaseURL = "https://res.cloudinary.com/dnwbkkjpo/image/upload/q_auto,f_auto";
+export default function Fashion() {
+  const cloudinaryBaseURL = "https://res.cloudinary.com/dnwbkkjpo/image/upload/q_auto,f_auto"
 
   const chapterData = {
     images: [
@@ -19,7 +19,7 @@ export default function Brands() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-100 py-12">
+    <main className="min-h-screen bg-stone-100 py-12">
       <ProgressiveImageChapter
         images={chapterData.images}
         criticalImageCount={5}

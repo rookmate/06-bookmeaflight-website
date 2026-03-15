@@ -1,6 +1,6 @@
 # Bookmeaflight Website
 
-A modern portfolio website for Bookmeaflight, wellness content creators specializing in hospitality, fashion, and dining experiences.
+A modern portfolio website for Bookmeaflight, wellness content creators specializing in hospitality, fashion and dining experiences.
 
 ## About
 

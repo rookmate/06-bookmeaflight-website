@@ -3,15 +3,15 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 255, 255, 255;
-  --background-end-rgb: 255, 255, 255;
+  --foreground-rgb: 28, 25, 23;
+  --background-rgb: 245, 243, 239;
+  color-scheme: light;
 }
 
 .responsive-bg {
-  /* Mobile view (< 768px) - original homepage2b */
   background-image: url('https://res.cloudinary.com/dnwbkkjpo/image/upload/q_auto,f_auto/v1718299505/homepage3f.jpg');
   background-position: center;
+  background-size: cover;
 }
 
 @media (orientation: landscape) {
@@ -22,7 +22,6 @@
 }
 
 @media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait){
-  /* Tablet view (768px-1023px) - cropped homepage2b */
   .responsive-bg {
     background-image: url('https://res.cloudinary.com/dnwbkkjpo/image/upload/c_crop,w_1536,h_864,ar_16:9,g_auto,q_auto,f_auto/v1718299505/homepage3a.jpg');
     background-position: top;
@@ -30,26 +29,37 @@
 }
 
 @media (min-width: 1025px) {
-  /* Desktop view (≥ 1024px) - homepage2a */
   .responsive-bg {
     background-image: url('https://res.cloudinary.com/dnwbkkjpo/image/upload/c_crop,w_1536,h_864,ar_16:9,g_auto,q_auto,f_auto/v1718299505/homepage3a.jpg');
     background-position: center;
   }
 }
 
+.hero-photo {
+  filter: saturate(0.95) contrast(1.04);
+}
+
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-  font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  background: rgb(var(--background-rgb));
+  font-family: "Avenir Next", "Avenir", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Gill Sans", "Trebuchet MS", "Segoe UI", sans-serif;
+  font-family: inherit;
+}
+
+a {
+  transition:
+    color 150ms ease,
+    background-color 150ms ease,
+    border-color 150ms ease,
+    opacity 150ms ease;
+}
+
+::selection {
+  background: rgba(68, 64, 60, 0.16);
 }
 
 @layer utilities {
