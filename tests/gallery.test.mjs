@@ -26,8 +26,23 @@ test("getVisibleImages includes critical plus progressive batches", () => {
   );
 });
 
-test("shouldAutoLoadMore respects threshold", () => {
-  assert.equal(shouldAutoLoadMore(650, 300, 1200), false);
-  assert.equal(shouldAutoLoadMore(700, 300, 1200, 0.75), true);
-  assert.equal(shouldAutoLoadMore(0, 0, 0), false);
+test("getVisibleImages keeps the initial render capped at the critical count", () => {
+  const images = Array.from({ length: 12 }, (_, index) => ({
+    src: `img-${index}`,
+    alt: `Image ${index}`
+  }));
+
+  const visible = getVisibleImages(images, 4, 0, 3);
+  assert.equal(visible.length, 4);
+  assert.deepEqual(
+    visible.map((image) => image.src),
+    ["img-0", "img-1", "img-2", "img-3"]
+  );
+});
+
+test("shouldAutoLoadMore checks whether the load trigger is near the viewport", () => {
+  assert.equal(shouldAutoLoadMore(1200, 800), false);
+  assert.equal(shouldAutoLoadMore(980, 800), true);
+  assert.equal(shouldAutoLoadMore(Number.POSITIVE_INFINITY, 800), false);
+  assert.equal(shouldAutoLoadMore(0, 0), false);
 });

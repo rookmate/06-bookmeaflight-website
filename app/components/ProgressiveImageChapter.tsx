@@ -8,6 +8,8 @@ import {
     shouldAutoLoadMore
 } from "../../lib/gallery.mjs"
 
+const LOAD_AHEAD_OFFSET = 240
+
 interface ImageChapterProps {
     images: {
         src: string
@@ -22,56 +24,106 @@ export default function ProgressiveImageChapter({
     criticalImageCount = 10,
     batchSize = 20
 }: ImageChapterProps) {
-    const [loadedBatches, setLoadedBatches] = useState(1)
+    const [loadedBatches, setLoadedBatches] = useState(0)
     const [isLoadingMore, setIsLoadingMore] = useState(false)
-    const loadMoreTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+    const loadedBatchesRef = useRef(0)
+    const isLoadingMoreRef = useRef(false)
+    const loadMoreTriggerRef = useRef<HTMLDivElement>(null)
+    const releaseLoadingFrameRef = useRef<number | null>(null)
 
     const progressiveImages = images.slice(criticalImageCount)
     const totalBatches = getTotalBatches(images.length, criticalImageCount, batchSize)
     const visibleImages = getVisibleImages(images, criticalImageCount, loadedBatches, batchSize)
+    const hasMoreImages = loadedBatches < totalBatches
+    const remainingImages = Math.max(0, progressiveImages.length - (loadedBatches * batchSize))
+
+    useEffect(() => {
+        loadedBatchesRef.current = loadedBatches
+    }, [loadedBatches])
+
+    const releaseLoadingState = useCallback(() => {
+        if (releaseLoadingFrameRef.current !== null) {
+            window.cancelAnimationFrame(releaseLoadingFrameRef.current)
+        }
+
+        releaseLoadingFrameRef.current = window.requestAnimationFrame(() => {
+            isLoadingMoreRef.current = false
+            setIsLoadingMore(false)
+            releaseLoadingFrameRef.current = null
+        })
+    }, [])
 
     const loadMoreImages = useCallback(() => {
-        if (loadedBatches < totalBatches && !isLoadingMore) {
+        if (loadedBatchesRef.current < totalBatches && !isLoadingMoreRef.current) {
+            isLoadingMoreRef.current = true
             setIsLoadingMore(true)
 
-            if (loadMoreTimeoutRef.current) {
-                clearTimeout(loadMoreTimeoutRef.current)
-            }
+            setLoadedBatches(prev => {
+                const nextLoadedBatches = Math.min(prev + 1, totalBatches)
+                loadedBatchesRef.current = nextLoadedBatches
+                return nextLoadedBatches
+            })
 
-            loadMoreTimeoutRef.current = setTimeout(() => {
-                setLoadedBatches(prev => prev + 1)
-                setIsLoadingMore(false)
-                loadMoreTimeoutRef.current = null
-            }, 300)
+            releaseLoadingState()
         }
-    }, [isLoadingMore, loadedBatches, totalBatches])
+    }, [releaseLoadingState, totalBatches])
 
     useEffect(() => {
         return () => {
-            if (loadMoreTimeoutRef.current) {
-                clearTimeout(loadMoreTimeoutRef.current)
+            if (releaseLoadingFrameRef.current !== null) {
+                window.cancelAnimationFrame(releaseLoadingFrameRef.current)
             }
         }
     }, [])
 
-    useEffect(() => {
-        const handleScroll = () => {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-            const windowHeight = window.innerHeight
-            const documentHeight = document.documentElement.scrollHeight
+    const maybeLoadMoreImages = useCallback(() => {
+        const triggerTop = loadMoreTriggerRef.current?.getBoundingClientRect().top ?? Number.POSITIVE_INFINITY
 
-            if (shouldAutoLoadMore(scrollTop, windowHeight, documentHeight)) {
-                loadMoreImages()
-            }
+        if (shouldAutoLoadMore(triggerTop, window.innerHeight, LOAD_AHEAD_OFFSET)) {
+            loadMoreImages()
+        }
+    }, [loadMoreImages])
+
+    useEffect(() => {
+        if (!hasMoreImages || !loadMoreTriggerRef.current) {
+            return
         }
 
-        window.addEventListener('scroll', handleScroll, { passive: true })
-        return () => window.removeEventListener('scroll', handleScroll)
-    }, [loadMoreImages])
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    loadMoreImages()
+                }
+            },
+            {
+                rootMargin: `0px 0px ${LOAD_AHEAD_OFFSET}px 0px`
+            }
+        )
+
+        observer.observe(loadMoreTriggerRef.current)
+        return () => observer.disconnect()
+    }, [hasMoreImages, loadMoreImages, visibleImages.length])
+
+    useEffect(() => {
+        if (!hasMoreImages) {
+            return
+        }
+
+        const frameId = window.requestAnimationFrame(maybeLoadMoreImages)
+        const handleResize = () => {
+            maybeLoadMoreImages()
+        }
+
+        window.addEventListener("resize", handleResize)
+
+        return () => {
+            window.cancelAnimationFrame(frameId)
+            window.removeEventListener("resize", handleResize)
+        }
+    }, [hasMoreImages, maybeLoadMoreImages, visibleImages.length])
 
     return (
         <div className="container mx-auto px-4 py-8">
-            {/* Image Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 {visibleImages.map((image, index) => (
                     <ProgressiveImage
@@ -83,8 +135,13 @@ export default function ProgressiveImageChapter({
                 ))}
             </div>
 
-            {loadedBatches < totalBatches && (
-                <div className="flex justify-center mt-8">
+            {hasMoreImages && (
+                <div className="mt-8 flex flex-col items-center gap-3">
+                    <div
+                        ref={loadMoreTriggerRef}
+                        aria-hidden="true"
+                        className="h-px w-full"
+                    />
                     <button
                         type="button"
                         onClick={loadMoreImages}
@@ -97,7 +154,7 @@ export default function ProgressiveImageChapter({
                                 Loading more images...
                             </div>
                         ) : (
-                            `Load More Images (${Math.max(0, progressiveImages.length - (loadedBatches * batchSize))} remaining)`
+                            `Load More Images (${remainingImages} remaining)`
                         )}
                     </button>
                 </div>
