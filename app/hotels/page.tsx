@@ -1,5 +1,3 @@
-"use client"
-
 import ProgressiveImageChapter from "../components/ProgressiveImageChapter"
 export default function Hotels() {
   const cloudinaryBaseURL = "https://res.cloudinary.com/dnwbkkjpo/image/upload/q_auto,f_auto";
