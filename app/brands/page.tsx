@@ -1,5 +1,3 @@
-"use client"
-
 import ProgressiveImageChapter from "../components/ProgressiveImageChapter"
 
 export default function Brands() {
