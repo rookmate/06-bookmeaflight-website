@@ -134,7 +134,7 @@ export const metadata: Metadata = {
 
 export default function Dining() {
   return (
-    <section className="bg-stone-100 py-12" aria-labelledby="dining-heading">
+    <section className="bg-stone-100" aria-labelledby="dining-heading">
       <h1 id="dining-heading" className="sr-only">
         Dining
       </h1>
