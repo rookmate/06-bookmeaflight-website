@@ -9,6 +9,7 @@ interface GalleryLightboxProps {
   readonly src: string
   readonly previewSrc: string
   readonly alt: string
+  readonly aspectRatio: number
   readonly onClose: () => void
 }
 
@@ -19,18 +20,35 @@ function getLightboxSrc(src: string, width: number) {
   )
 }
 
+function getLightboxWidth(aspectRatio: number) {
+  const padding = window.innerWidth >= 768 ? 64 : 32
+  const availableWidth = window.innerWidth - padding
+  const availableHeight = window.innerHeight - padding
+  const renderedWidth = Math.min(
+    availableWidth,
+    availableHeight * aspectRatio,
+  )
+  const requiredWidth = Math.ceil(renderedWidth * window.devicePixelRatio)
+
+  return (
+    LIGHTBOX_WIDTHS.find((width) => width >= requiredWidth) ??
+    LIGHTBOX_WIDTHS[LIGHTBOX_WIDTHS.length - 1]
+  )
+}
+
 export default function GalleryLightbox({
   src,
   previewSrc,
   alt,
+  aspectRatio,
   onClose,
 }: GalleryLightboxProps) {
   const dialogRef = useRef<HTMLDialogElement>(null)
   const [isHighResolutionLoaded, setIsHighResolutionLoaded] = useState(false)
-  const highResolutionSrc = getLightboxSrc(src, 1600)
-  const highResolutionSrcSet = LIGHTBOX_WIDTHS.map(
-    (width) => `${getLightboxSrc(src, width)} ${width}w`,
-  ).join(", ")
+  const highResolutionSrc = getLightboxSrc(
+    src,
+    getLightboxWidth(aspectRatio),
+  )
 
   useEffect(() => {
     const dialog = dialogRef.current
@@ -90,11 +108,9 @@ export default function GalleryLightbox({
           }`}
         />
 
-        {/* eslint-disable-next-line @next/next/no-img-element -- Cloudinary owns the lightbox-only responsive source set. */}
+        {/* eslint-disable-next-line @next/next/no-img-element -- Cloudinary serves one source matched to the selected image geometry. */}
         <img
           src={highResolutionSrc}
-          srcSet={highResolutionSrcSet}
-          sizes="(min-width: 768px) calc(100vw - 64px), calc(100vw - 32px)"
           alt={alt}
           loading="eager"
           decoding="async"
