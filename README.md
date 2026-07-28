@@ -5,6 +5,7 @@ A modern portfolio website for Bookmeaflight, wellness content creators speciali
 ## About
 
 Bookmeaflight is a wellness content creation brand that showcases curated experiences across three main categories:
+
 - **Hospitality** - Luxury hotel and spa experiences
 - **Fashion** - Accessories and lifestyle products
 - **Dining** - Restaurant and culinary experiences
@@ -12,14 +13,14 @@ Bookmeaflight is a wellness content creation brand that showcases curated experi
 ## Features
 
 - **Responsive Design** - Optimized for all device sizes with mobile-first approach
-- **Image Gallery** - Masonry-style image grids showcasing portfolio work
-- **Smooth Navigation** - Fixed header and footer with scroll-based visibility
-- **Performance Optimized** - Cloudinary integration for optimized image delivery
+- **Image Gallery** - Continuous responsive grids with native lazy loading
+- **Smooth Navigation** - Sticky site navigation across every portfolio route
+- **Performance Optimized** - Responsive Next Image and Cloudinary delivery
 - **Modern UI** - Clean, minimalist design with Tailwind CSS
 
 ## Tech Stack
 
-- **Framework**: Next.js 15 with App Router
+- **Framework**: Next.js 16 with App Router
 - **Styling**: Tailwind CSS
 - **Fonts**: System font stacks (no external font fetch at build time)
 - **Images**: Cloudinary for optimized image delivery
@@ -32,12 +33,14 @@ Bookmeaflight is a wellness content creation brand that showcases curated experi
 app/
 ├── components/          # Reusable UI components
 │   ├── EmailIcon.tsx
+│   ├── GalleryGrid.tsx
+│   ├── GalleryImage.tsx
 │   ├── InstagramIcon.tsx
 │   ├── NavigationTiles.tsx
 │   └── PlaneIcon.tsx
-├── brands/             # Fashion portfolio page
-├── hotels/             # Hospitality portfolio page
-├── restaurants/        # Dining portfolio page
+├── dining/             # Dining portfolio page
+├── fashion/            # Fashion portfolio page
+├── hospitality/        # Hospitality portfolio page
 ├── Header.tsx          # Navigation header
 ├── Footer.tsx          # Site footer
 ├── layout.tsx          # Root layout
@@ -47,11 +50,13 @@ app/
 ## Getting Started
 
 1. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 2. **Run the development server**:
+
    ```bash
    npm run dev
    ```
@@ -66,7 +71,7 @@ app/
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint
 - `npm run typecheck` - Run TypeScript checks
-- `npm test` - Run Node test suite
+- `npm test` - Build the production site and verify its static output
 
 ## Contact
 

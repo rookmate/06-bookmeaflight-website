@@ -1,7 +1,5 @@
-"use client";
-
-import Link from "next/link";
-import PlaneIcon from "./components/PlaneIcon";
+import Link from "next/link"
+import PlaneIcon from "./components/PlaneIcon"
 
 export default function Header() {
   return (
@@ -13,17 +11,31 @@ export default function Header() {
           prefetch={false}
         >
           <PlaneIcon className="h-5 w-5 text-white" />
-          <span className="ml-2 text-sm font-medium tracking-[-0.02em]">Bookmeaflight</span>
+          <span className="ml-2 text-sm font-medium tracking-[-0.02em]">
+            Bookmeaflight
+          </span>
         </Link>
 
-        <nav className="flex flex-wrap gap-x-6 gap-y-2">
-          <Link href="/hospitality" className="text-sm font-medium text-stone-200 hover:text-white" prefetch={false}>
+        <nav aria-label="Primary" className="flex flex-wrap gap-x-6 gap-y-2">
+          <Link
+            href="/hospitality"
+            className="text-sm font-medium text-stone-200 hover:text-white"
+            prefetch={false}
+          >
             Hospitality
           </Link>
-          <Link href="/fashion" className="text-sm font-medium text-stone-200 hover:text-white" prefetch={false}>
+          <Link
+            href="/fashion"
+            className="text-sm font-medium text-stone-200 hover:text-white"
+            prefetch={false}
+          >
             Fashion
           </Link>
-          <Link href="/dining" className="text-sm font-medium text-stone-200 hover:text-white" prefetch={false}>
+          <Link
+            href="/dining"
+            className="text-sm font-medium text-stone-200 hover:text-white"
+            prefetch={false}
+          >
             Dining
           </Link>
         </nav>

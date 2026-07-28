@@ -9,28 +9,28 @@
 }
 
 .responsive-bg {
-  background-image: url('https://res.cloudinary.com/dnwbkkjpo/image/upload/q_auto,f_auto/v1718299505/homepage3f.jpg');
+  background-image: url("https://res.cloudinary.com/dnwbkkjpo/image/upload/c_limit,w_1200,q_auto,f_auto/v1718299505/homepage3f.jpg");
   background-position: center;
   background-size: cover;
 }
 
 @media (orientation: landscape) {
   .responsive-bg {
-    background-image: url('https://res.cloudinary.com/dnwbkkjpo/image/upload/c_crop,w_1536,h_864,ar_16:9,g_auto,q_auto,f_auto/v1718299505/homepage3a.jpg');
+    background-image: url("https://res.cloudinary.com/dnwbkkjpo/image/upload/c_crop,w_1536,h_864,ar_16:9,g_auto,q_auto,f_auto/v1718299505/homepage3a.jpg");
     background-position: center;
   }
 }
 
-@media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait){
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
   .responsive-bg {
-    background-image: url('https://res.cloudinary.com/dnwbkkjpo/image/upload/c_crop,w_1536,h_864,ar_16:9,g_auto,q_auto,f_auto/v1718299505/homepage3a.jpg');
+    background-image: url("https://res.cloudinary.com/dnwbkkjpo/image/upload/c_crop,w_1536,h_864,ar_16:9,g_auto,q_auto,f_auto/v1718299505/homepage3a.jpg");
     background-position: top;
   }
 }
 
 @media (min-width: 1025px) {
   .responsive-bg {
-    background-image: url('https://res.cloudinary.com/dnwbkkjpo/image/upload/c_crop,w_1536,h_864,ar_16:9,g_auto,q_auto,f_auto/v1718299505/homepage3a.jpg');
+    background-image: url("https://res.cloudinary.com/dnwbkkjpo/image/upload/c_crop,w_1536,h_864,ar_16:9,g_auto,q_auto,f_auto/v1718299505/homepage3a.jpg");
     background-position: center;
   }
 }
@@ -46,7 +46,12 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: inherit;
 }
 
