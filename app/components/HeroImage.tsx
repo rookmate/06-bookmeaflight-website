@@ -24,7 +24,9 @@ export default function HeroImage() {
     height: 864,
   })
 
-  const { props: portraitProps } = getImageProps({
+  const {
+    props: { srcSet: portraitSrcSet },
+  } = getImageProps({
     ...commonImageProps,
     src: portraitHeroSrc,
     width: 1200,
@@ -36,10 +38,17 @@ export default function HeroImage() {
       <source
         media="(orientation: landscape), (min-width: 768px)"
         srcSet={landscapeSrcSet}
+        sizes="100vw"
       />
+      <source srcSet={portraitSrcSet} sizes="100vw" />
       <img
-        {...portraitProps}
+        src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
         alt=""
+        width={1200}
+        height={1800}
+        loading="eager"
+        decoding="async"
+        fetchPriority="high"
         className="hero-photo h-full w-full object-cover"
       />
     </picture>

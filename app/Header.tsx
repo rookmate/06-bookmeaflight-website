@@ -20,27 +20,24 @@ export default function Header() {
           aria-label="Primary"
           className="flex flex-wrap justify-center gap-x-6 gap-y-2"
         >
-          <Link
+          <a
             href="/hospitality"
             className="text-sm font-medium text-stone-200 hover:text-white"
-            prefetch={false}
           >
             Hospitality
-          </Link>
-          <Link
+          </a>
+          <a
             href="/fashion"
             className="text-sm font-medium text-stone-200 hover:text-white"
-            prefetch={false}
           >
             Fashion
-          </Link>
-          <Link
+          </a>
+          <a
             href="/dining"
             className="text-sm font-medium text-stone-200 hover:text-white"
-            prefetch={false}
           >
             Dining
-          </Link>
+          </a>
         </nav>
       </div>
     </header>
