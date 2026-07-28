@@ -16,7 +16,10 @@ export default function Header() {
           </span>
         </Link>
 
-        <nav aria-label="Primary" className="flex flex-wrap gap-x-6 gap-y-2">
+        <nav
+          aria-label="Primary"
+          className="flex flex-wrap justify-center gap-x-6 gap-y-2"
+        >
           <Link
             href="/hospitality"
             className="text-sm font-medium text-stone-200 hover:text-white"
