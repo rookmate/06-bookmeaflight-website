@@ -12,10 +12,10 @@ Bookmeaflight is a wellness content creation brand that showcases curated experi
 
 ## Features
 
-- **Responsive Design** - Optimized for all device sizes with mobile-first approach
+- **Responsive Design** - Parser-discoverable, art-directed hero imagery and mobile-first layouts
 - **Image Gallery** - Continuous responsive grids with native lazy loading
 - **Smooth Navigation** - Sticky site navigation across every portfolio route
-- **Performance Optimized** - Responsive Next Image and Cloudinary delivery
+- **Performance Optimized** - Bounded Cloudinary inputs with responsive Next Image output
 - **Modern UI** - Clean, minimalist design with Tailwind CSS
 
 ## Tech Stack
@@ -35,6 +35,7 @@ app/
 │   ├── EmailIcon.tsx
 │   ├── GalleryGrid.tsx
 │   ├── GalleryImage.tsx
+│   ├── HeroImage.tsx
 │   ├── InstagramIcon.tsx
 │   ├── NavigationTiles.tsx
 │   └── PlaneIcon.tsx

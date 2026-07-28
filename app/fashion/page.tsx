@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import GalleryGrid, { type GalleryImageData } from "../components/GalleryGrid"
 
 const cloudinaryBaseURL =
-  "https://res.cloudinary.com/dnwbkkjpo/image/upload/q_auto,f_auto"
+  "https://res.cloudinary.com/dnwbkkjpo/image/upload/c_limit,w_1200,q_auto,f_auto"
 
 const images = [
   {

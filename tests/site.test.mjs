@@ -6,8 +6,10 @@ const routes = [
   {
     pathname: "/",
     file: "index.html",
-    imageCount: 3,
+    imageCount: 4,
     lazyImageCount: 3,
+    eagerImageCount: 1,
+    highPriorityImageCount: 1,
     preloadCount: 0,
   },
   {
@@ -15,6 +17,8 @@ const routes = [
     file: "hospitality.html",
     imageCount: 45,
     lazyImageCount: 44,
+    eagerImageCount: 0,
+    highPriorityImageCount: 0,
     preloadCount: 1,
   },
   {
@@ -22,6 +26,8 @@ const routes = [
     file: "fashion.html",
     imageCount: 10,
     lazyImageCount: 9,
+    eagerImageCount: 0,
+    highPriorityImageCount: 0,
     preloadCount: 1,
   },
   {
@@ -29,6 +35,8 @@ const routes = [
     file: "dining.html",
     imageCount: 30,
     lazyImageCount: 29,
+    eagerImageCount: 0,
+    highPriorityImageCount: 0,
     preloadCount: 1,
   },
 ]
@@ -56,8 +64,16 @@ for (const route of routes) {
     assert.equal(countMatches(html, /<h1(?:\s|>)/g), 1)
     assert.equal(countMatches(html, /<img(?:\s|>)/g), route.imageCount)
     assert.equal(
+      countMatches(html, /\bloading="eager"/g),
+      route.eagerImageCount,
+    )
+    assert.equal(
       countMatches(html, /\bloading="lazy"/g),
       route.lazyImageCount,
+    )
+    assert.equal(
+      countMatches(html, /\bfetchPriority="high"/gi),
+      route.highPriorityImageCount,
     )
     assert.equal(
       countMatches(
@@ -74,6 +90,14 @@ for (const route of routes) {
       ),
       1,
     )
+    assert.doesNotMatch(html, /\bw=(?:1920|2048|3840)\b/)
+
+    const imageTags = html.match(/<img(?:\s|>)[^>]*>/g) ?? []
+    assert.equal(
+      imageTags.filter((tag) => tag.includes("c_limit%2Cw_1200")).length,
+      route.imageCount,
+    )
+
     assert.doesNotMatch(html, /Load More Images/)
   })
 }
@@ -86,6 +110,14 @@ test("homepage has the expected portfolio navigation hierarchy", async () => {
     countMatches(
       html,
       /<nav(?=[^>]*\baria-label="Portfolio categories"(?:\s|>))[^>]*>/g,
+    ),
+    1,
+  )
+  assert.equal(countMatches(html, /<picture(?:\s|>)/g), 1)
+  assert.equal(
+    countMatches(
+      html,
+      /<source(?=[^>]*\bmedia="\(orientation: landscape\), \(min-width: 768px\)")[^>]*>/g,
     ),
     1,
   )

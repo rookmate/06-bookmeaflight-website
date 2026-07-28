@@ -1,13 +1,14 @@
 import NavigationTiles from "./components/NavigationTiles"
 import InstagramIcon from "./components/InstagramIcon"
 import EmailIcon from "./components/EmailIcon"
+import HeroImage from "./components/HeroImage"
 
 export default function Home() {
   return (
     <div className="flex flex-col bg-stone-100 text-stone-900">
       <div className="flex-1">
         <section className="relative overflow-hidden border-b border-stone-300 bg-stone-950 text-stone-50">
-          <div className="responsive-bg hero-photo absolute inset-0" />
+          <HeroImage />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(23,23,23,0.18),rgba(23,23,23,0.42)_44%,rgba(23,23,23,0.82))]" />
 
           <div className="relative mx-auto flex min-h-[78svh] max-w-6xl flex-col justify-end px-5 pb-16 pt-24 md:px-8 lg:px-10 lg:pb-20">
