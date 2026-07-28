@@ -48,7 +48,7 @@ export const metadata: Metadata = {
 
 export default function Fashion() {
   return (
-    <section className="bg-stone-100 py-12" aria-labelledby="fashion-heading">
+    <section className="bg-stone-100" aria-labelledby="fashion-heading">
       <h1 id="fashion-heading" className="sr-only">
         Fashion
       </h1>
