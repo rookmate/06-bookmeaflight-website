@@ -11,6 +11,7 @@ const routes = [
     eagerImageCount: 1,
     highPriorityImageCount: 1,
     preloadCount: 0,
+    lightboxTriggerCount: 0,
   },
   {
     pathname: "/hospitality",
@@ -20,6 +21,7 @@ const routes = [
     eagerImageCount: 0,
     highPriorityImageCount: 0,
     preloadCount: 1,
+    lightboxTriggerCount: 45,
   },
   {
     pathname: "/fashion",
@@ -29,6 +31,7 @@ const routes = [
     eagerImageCount: 0,
     highPriorityImageCount: 0,
     preloadCount: 1,
+    lightboxTriggerCount: 10,
   },
   {
     pathname: "/dining",
@@ -38,6 +41,7 @@ const routes = [
     eagerImageCount: 0,
     highPriorityImageCount: 0,
     preloadCount: 1,
+    lightboxTriggerCount: 30,
   },
 ]
 
@@ -83,6 +87,10 @@ for (const route of routes) {
       route.preloadCount,
     )
     assert.equal(countMatches(html, /\bhref="#main-content"/g), 1)
+    assert.equal(
+      countMatches(html, /\baria-label="View [^"]+ larger"/g),
+      route.lightboxTriggerCount,
+    )
     assert.equal(
       countMatches(
         html,

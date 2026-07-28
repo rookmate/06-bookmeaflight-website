@@ -19,12 +19,14 @@ const GALLERY_IMAGE_SIZES = [
 
 interface GalleryImageProps extends GalleryImageData {
   readonly preload?: boolean
+  readonly onOpen: (previewSrc: string) => void
 }
 
 export default function GalleryImage({
   src,
   alt,
   preload = false,
+  onOpen,
 }: GalleryImageProps) {
   const [status, setStatus] = useState<GalleryImageStatus>("loading")
   const handleImageRef = useCallback((image: HTMLImageElement | null) => {
@@ -36,7 +38,18 @@ export default function GalleryImage({
   }, [])
 
   return (
-    <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-200">
+    <button
+      type="button"
+      aria-label={`View ${alt} larger`}
+      disabled={status !== "loaded"}
+      onClick={(event) => {
+        const previewSrc =
+          event.currentTarget.querySelector("img")?.currentSrc ?? src
+
+        onOpen(previewSrc)
+      }}
+      className="relative block aspect-square w-full cursor-zoom-in overflow-hidden rounded-lg bg-gray-200 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-stone-950 focus-visible:ring-offset-2 disabled:cursor-default"
+    >
       {status === "loading" && (
         <div className="absolute inset-0 flex animate-pulse items-center justify-center bg-gray-200">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600" />
@@ -75,6 +88,6 @@ export default function GalleryImage({
           onError={() => setStatus("error")}
         />
       )}
-    </div>
+    </button>
   )
 }
