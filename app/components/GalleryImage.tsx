@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { useEffect, useRef, useState } from "react"
+import { useState } from "react"
 
 export interface GalleryImageData {
   readonly src: string
@@ -27,17 +27,6 @@ export default function GalleryImage({
   preload = false,
 }: GalleryImageProps) {
   const [status, setStatus] = useState<GalleryImageStatus>("loading")
-  const imageRef = useRef<HTMLImageElement>(null)
-
-  useEffect(() => {
-    const image = imageRef.current
-
-    if (!image?.complete) {
-      return
-    }
-
-    setStatus(image.naturalWidth > 0 ? "loaded" : "error")
-  }, [])
 
   return (
     <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-200">
@@ -74,7 +63,6 @@ export default function GalleryImage({
           }`}
           sizes={GALLERY_IMAGE_SIZES}
           preload={preload}
-          ref={imageRef}
           onLoad={() => setStatus("loaded")}
           onError={() => setStatus("error")}
         />
