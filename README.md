@@ -13,9 +13,9 @@ Bookmeaflight is a wellness content creation brand that showcases curated experi
 ## Features
 
 - **Responsive Design** - Parser-discoverable, art-directed hero imagery and mobile-first layouts
-- **Image Gallery** - Continuous responsive grids with native lazy loading and an on-demand high-resolution lightbox
+- **Image Gallery** - Geometry-matched responsive thumbnails with native lazy loading and an on-demand, display-sized high-resolution lightbox
 - **Smooth Navigation** - Sticky site navigation across every portfolio route
-- **Performance Optimized** - Bounded Cloudinary inputs with responsive Next Image output
+- **Performance Optimized** - Bounded Cloudinary inputs, tightly sized Next Image output and compressed production-payload budgets
 - **Modern UI** - Clean, minimalist design with Tailwind CSS
 
 ## Tech Stack
@@ -73,7 +73,7 @@ app/
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint
 - `npm run typecheck` - Run TypeScript checks
-- `npm test` - Build the production site and verify its static output
+- `npm test` - Build the production site and verify its static output and compressed payload budgets
 
 ## Contact
 

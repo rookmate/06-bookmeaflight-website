@@ -13,6 +13,7 @@ interface GalleryGridProps {
 interface LightboxSelection {
   readonly image: GalleryImageData
   readonly previewSrc: string
+  readonly aspectRatio: number
 }
 
 export default function GalleryGrid({ images }: GalleryGridProps) {
@@ -28,7 +29,9 @@ export default function GalleryGrid({ images }: GalleryGridProps) {
               src={image.src}
               alt={image.alt}
               preload={index === 0}
-              onOpen={(previewSrc) => setSelection({ image, previewSrc })}
+              onOpen={(previewSrc, aspectRatio) =>
+                setSelection({ image, previewSrc, aspectRatio })
+              }
             />
           ))}
         </div>
@@ -39,6 +42,7 @@ export default function GalleryGrid({ images }: GalleryGridProps) {
           src={selection.image.src}
           previewSrc={selection.previewSrc}
           alt={selection.image.alt}
+          aspectRatio={selection.aspectRatio}
           onClose={() => setSelection(null)}
         />
       )}

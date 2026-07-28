@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { useCallback, useState } from "react"
+import { useState } from "react"
 
 export interface GalleryImageData {
   readonly src: string
@@ -11,15 +11,17 @@ export interface GalleryImageData {
 type GalleryImageStatus = "loading" | "loaded" | "error"
 
 const GALLERY_IMAGE_SIZES = [
-  "(min-width: 1536px) 300px",
-  "(min-width: 1024px) 20vw",
-  "(min-width: 768px) 25vw",
-  "50vw",
+  "(min-width: 1536px) 261px",
+  "(min-width: 1280px) 237px",
+  "(min-width: 1024px) 186px",
+  "(min-width: 768px) 172px",
+  "(min-width: 640px) 296px",
+  "45vw",
 ].join(", ")
 
 interface GalleryImageProps extends GalleryImageData {
   readonly preload?: boolean
-  readonly onOpen: (previewSrc: string) => void
+  readonly onOpen: (previewSrc: string, aspectRatio: number) => void
 }
 
 export default function GalleryImage({
@@ -29,13 +31,6 @@ export default function GalleryImage({
   onOpen,
 }: GalleryImageProps) {
   const [status, setStatus] = useState<GalleryImageStatus>("loading")
-  const handleImageRef = useCallback((image: HTMLImageElement | null) => {
-    if (!image?.complete) {
-      return
-    }
-
-    setStatus(image.naturalWidth > 0 ? "loaded" : "error")
-  }, [])
 
   return (
     <button
@@ -43,19 +38,17 @@ export default function GalleryImage({
       aria-label={`View ${alt} larger`}
       disabled={status !== "loaded"}
       onClick={(event) => {
-        const previewSrc =
-          event.currentTarget.querySelector("img")?.currentSrc ?? src
+        const image = event.currentTarget.querySelector("img")
+        const previewSrc = image?.currentSrc ?? src
+        const aspectRatio =
+          image?.naturalWidth && image.naturalHeight
+            ? image.naturalWidth / image.naturalHeight
+            : 1
 
-        onOpen(previewSrc)
+        onOpen(previewSrc, aspectRatio)
       }}
       className="relative block aspect-square w-full cursor-zoom-in overflow-hidden rounded-lg bg-gray-200 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-stone-950 focus-visible:ring-offset-2 disabled:cursor-default"
     >
-      {status === "loading" && (
-        <div className="absolute inset-0 flex animate-pulse items-center justify-center bg-gray-200">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600" />
-        </div>
-      )}
-
       {status === "error" && (
         <div
           role="img"
@@ -83,7 +76,6 @@ export default function GalleryImage({
           }`}
           sizes={GALLERY_IMAGE_SIZES}
           preload={preload}
-          ref={handleImageRef}
           onLoad={() => setStatus("loaded")}
           onError={() => setStatus("error")}
         />

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict"
 import { readFile } from "node:fs/promises"
 import test from "node:test"
+import { gzipSync } from "node:zlib"
 
 const routes = [
   {
@@ -12,6 +13,7 @@ const routes = [
     highPriorityImageCount: 1,
     preloadCount: 0,
     lightboxTriggerCount: 0,
+    boundedImageCount: 3,
   },
   {
     pathname: "/hospitality",
@@ -22,6 +24,7 @@ const routes = [
     highPriorityImageCount: 0,
     preloadCount: 1,
     lightboxTriggerCount: 45,
+    boundedImageCount: 45,
   },
   {
     pathname: "/fashion",
@@ -32,6 +35,7 @@ const routes = [
     highPriorityImageCount: 0,
     preloadCount: 1,
     lightboxTriggerCount: 10,
+    boundedImageCount: 10,
   },
   {
     pathname: "/dining",
@@ -42,6 +46,7 @@ const routes = [
     highPriorityImageCount: 0,
     preloadCount: 1,
     lightboxTriggerCount: 30,
+    boundedImageCount: 30,
   },
 ]
 
@@ -103,7 +108,7 @@ for (const route of routes) {
     const imageTags = html.match(/<img(?:\s|>)[^>]*>/g) ?? []
     assert.equal(
       imageTags.filter((tag) => tag.includes("c_limit%2Cw_1200")).length,
-      route.imageCount,
+      route.boundedImageCount,
     )
 
     assert.doesNotMatch(html, /Load More Images/)
@@ -122,6 +127,7 @@ test("homepage has the expected portfolio navigation hierarchy", async () => {
     1,
   )
   assert.equal(countMatches(html, /<picture(?:\s|>)/g), 1)
+  assert.equal(countMatches(html, /<source(?:\s|>)/g), 2)
   assert.equal(
     countMatches(
       html,
@@ -129,6 +135,62 @@ test("homepage has the expected portfolio navigation hierarchy", async () => {
     ),
     1,
   )
+  assert.equal(
+    countMatches(html, /<source(?=[^>]*\bsrcSet=)(?![^>]*\bmedia=)[^>]*>/g),
+    1,
+  )
   assert.equal(countMatches(html, /<h2(?:\s|>)/g), 3)
   assert.equal(countMatches(html, /<h3(?:\s|>)/g), 0)
+})
+
+test("production routes stay within compressed document and asset budgets", async () => {
+  const budgets = {
+    html: 15_000,
+    javascript: 190_000,
+    css: 6_000,
+  }
+
+  for (const route of routes) {
+    const outputPath = new URL(
+      `../.next/server/app/${route.file}`,
+      import.meta.url,
+    )
+    const html = await readFile(outputPath, "utf8")
+    const assetPaths = [
+      ...html.matchAll(
+        /(?:src|href)="(\/_next\/static\/[^"?]+\.(?:js|css))(?:\?[^"]*)?"/g,
+      ),
+    ].map((match) => match[1])
+
+    const uniqueAssetPaths = [...new Set(assetPaths)]
+    let javascriptBytes = 0
+    let cssBytes = 0
+
+    for (const assetPath of uniqueAssetPaths) {
+      const assetUrl = new URL(
+        `../.next/${assetPath.slice("/_next/".length)}`,
+        import.meta.url,
+      )
+      const compressedBytes = gzipSync(await readFile(assetUrl)).byteLength
+
+      if (assetPath.endsWith(".js")) {
+        javascriptBytes += compressedBytes
+      } else {
+        cssBytes += compressedBytes
+      }
+    }
+
+    assert.ok(
+      gzipSync(html).byteLength <= budgets.html,
+      `${route.pathname} HTML exceeds ${budgets.html} compressed bytes`,
+    )
+    assert.ok(
+      javascriptBytes <= budgets.javascript,
+      `${route.pathname} JavaScript exceeds ${budgets.javascript} compressed bytes`,
+    )
+    assert.ok(
+      cssBytes <= budgets.css,
+      `${route.pathname} CSS exceeds ${budgets.css} compressed bytes`,
+    )
+  }
 })

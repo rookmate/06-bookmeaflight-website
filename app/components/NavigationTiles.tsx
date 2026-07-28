@@ -1,5 +1,4 @@
 import Image from "next/image"
-import Link from "next/link"
 import { portfolioSections } from "../portfolioSections"
 
 const TILE_IMAGE_SIZES = [
@@ -16,11 +15,10 @@ export default function NavigationTiles() {
     >
       <div className="grid gap-px border border-stone-300 bg-stone-300 md:grid-cols-3">
         {portfolioSections.map((tile) => (
-          <Link
+          <a
             key={tile.title}
             href={tile.href}
             className="group flex h-full flex-col bg-stone-100"
-            prefetch={false}
           >
             <div className="relative aspect-[4/5] overflow-hidden bg-stone-200">
               <Image
@@ -46,7 +44,7 @@ export default function NavigationTiles() {
                 View
               </span>
             </div>
-          </Link>
+          </a>
         ))}
       </div>
     </nav>
