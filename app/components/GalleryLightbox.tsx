@@ -103,7 +103,7 @@ export default function GalleryLightbox({
           src={previewSrc}
           alt=""
           aria-hidden="true"
-          className={`pointer-events-auto absolute left-1/2 top-1/2 max-h-full max-w-full -translate-x-1/2 -translate-y-1/2 object-contain transition-opacity duration-200 ${
+          className={`pointer-events-auto absolute inset-0 h-full w-full object-contain transition-opacity duration-200 ${
             isHighResolutionLoaded ? "opacity-0" : "opacity-100"
           }`}
         />
@@ -116,7 +116,7 @@ export default function GalleryLightbox({
           decoding="async"
           fetchPriority="high"
           onLoad={() => setIsHighResolutionLoaded(true)}
-          className={`pointer-events-auto absolute left-1/2 top-1/2 max-h-full max-w-full -translate-x-1/2 -translate-y-1/2 object-contain transition-opacity duration-200 ${
+          className={`pointer-events-auto absolute inset-0 h-full w-full object-contain transition-opacity duration-200 ${
             isHighResolutionLoaded ? "opacity-100" : "opacity-0"
           }`}
         />
