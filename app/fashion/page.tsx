@@ -1,5 +1,6 @@
-import type { Metadata } from "next"
-import GalleryGrid, { type GalleryImageData } from "../components/GalleryGrid"
+import type { GalleryImageData } from "../components/GalleryGrid"
+import PortfolioPage from "../components/PortfolioPage"
+import { pageMetadata } from "../siteMetadata"
 
 const cloudinaryBaseURL =
   "https://res.cloudinary.com/dnwbkkjpo/image/upload/c_limit,w_1200,q_auto,f_auto"
@@ -41,18 +42,10 @@ const images = [
   { src: `${cloudinaryBaseURL}/v1737806061/rings-brand.jpg`, alt: "Rings" },
 ] satisfies readonly GalleryImageData[]
 
-export const metadata: Metadata = {
-  title: "Fashion | Bookmeaflight",
-  description: "Objects, texture and styling built for close attention.",
-}
+const description = "Accessories and lifestyle photography, with a focus on texture and detail."
+
+export const metadata = pageMetadata("Fashion | Bookmeaflight", description, "/fashion")
 
 export default function Fashion() {
-  return (
-    <section className="bg-stone-100" aria-labelledby="fashion-heading">
-      <h1 id="fashion-heading" className="sr-only">
-        Fashion
-      </h1>
-      <GalleryGrid images={images} />
-    </section>
-  )
+  return <PortfolioPage title="Fashion" description={description} images={images} />
 }
