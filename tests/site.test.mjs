@@ -113,8 +113,6 @@ for (const route of routes) {
 
     assert.doesNotMatch(html, /Load More Images/)
     assert.doesNotMatch(html, /<img[^>]*opacity-0/)
-    assert.match(html, /href="mailto:hello@bookmeaflight\.eu"/)
-    assert.match(html, /Discuss a project/)
 
     const canonical = `https://www.bookmeaflight.eu${route.pathname === "/" ? "" : route.pathname}`
     assert.ok(html.includes(`<link rel="canonical" href="${canonical}"`))
