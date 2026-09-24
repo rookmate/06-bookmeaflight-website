@@ -8,7 +8,10 @@ export interface GalleryImageData {
   readonly alt: string
 }
 
-type GalleryImageStatus = "loading" | "loaded" | "error"
+export interface GalleryPreview {
+  readonly src: string
+  readonly aspectRatio: number
+}
 
 const GALLERY_IMAGE_SIZES = [
   "(min-width: 1536px) 261px",
@@ -21,7 +24,8 @@ const GALLERY_IMAGE_SIZES = [
 
 interface GalleryImageProps extends GalleryImageData {
   readonly preload?: boolean
-  readonly onOpen: (previewSrc: string, aspectRatio: number) => void
+  readonly onOpen: () => void
+  readonly onPreviewLoad: (preview: GalleryPreview) => void
 }
 
 export default function GalleryImage({
@@ -29,57 +33,56 @@ export default function GalleryImage({
   alt,
   preload = false,
   onOpen,
+  onPreviewLoad,
 }: GalleryImageProps) {
-  const [status, setStatus] = useState<GalleryImageStatus>("loading")
+  const [hasError, setHasError] = useState(false)
 
   return (
-    <button
-      type="button"
+    <a
+      href={src}
       aria-label={`View ${alt} larger`}
-      disabled={status !== "loaded"}
+      aria-haspopup="dialog"
       onClick={(event) => {
-        const image = event.currentTarget.querySelector("img")
-        const previewSrc = image?.currentSrc ?? src
-        const aspectRatio =
-          image?.naturalWidth && image.naturalHeight
-            ? image.naturalWidth / image.naturalHeight
-            : 1
-
-        onOpen(previewSrc, aspectRatio)
+        if (
+          event.button !== 0 || event.metaKey || event.ctrlKey ||
+          event.shiftKey || event.altKey
+        ) return
+        event.preventDefault()
+        onOpen()
       }}
-      className="relative block aspect-square w-full cursor-zoom-in overflow-hidden rounded-lg bg-gray-200 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-stone-950 focus-visible:ring-offset-2 disabled:cursor-default"
+      className="relative block aspect-square w-full cursor-zoom-in overflow-hidden rounded-lg bg-stone-200 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-stone-950 focus-visible:ring-offset-2"
     >
-      {status === "error" && (
+      {hasError && (
         <div
           role="img"
           aria-label={`${alt}. Image unavailable.`}
-          className="absolute inset-0 flex items-center justify-center bg-gray-100"
+          className="absolute inset-0 flex items-center justify-center bg-stone-200"
         >
-          <div className="p-2 text-center text-sm text-gray-400">
-            <div className="mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded bg-gray-300">
-              <span className="text-xs" aria-hidden="true">
-                📷
-              </span>
-            </div>
+          <div className="p-3 text-center text-sm text-stone-700">
             <div>Image unavailable</div>
+            <div className="mt-1 underline underline-offset-4">Try full-size image</div>
           </div>
         </div>
       )}
 
-      {status !== "error" && (
+      {!hasError && (
         <Image
           src={src}
           alt={alt}
           fill
-          className={`object-cover transition-opacity duration-300 ${
-            status === "loaded" ? "opacity-100" : "opacity-0"
-          }`}
+          className="object-cover"
           sizes={GALLERY_IMAGE_SIZES}
           preload={preload}
-          onLoad={() => setStatus("loaded")}
-          onError={() => setStatus("error")}
+          onLoad={(event) => {
+            const image = event.currentTarget
+            onPreviewLoad({
+              src: image.currentSrc,
+              aspectRatio: image.naturalWidth / image.naturalHeight,
+            })
+          }}
+          onError={() => setHasError(true)}
         />
       )}
-    </button>
+    </a>
   )
 }
