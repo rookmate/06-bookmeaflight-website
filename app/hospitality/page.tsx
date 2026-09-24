@@ -1,5 +1,6 @@
-import type { Metadata } from "next"
-import GalleryGrid, { type GalleryImageData } from "../components/GalleryGrid"
+import type { GalleryImageData } from "../components/GalleryGrid"
+import PortfolioPage from "../components/PortfolioPage"
+import { pageMetadata } from "../siteMetadata"
 
 const cloudinaryBaseURL =
   "https://res.cloudinary.com/dnwbkkjpo/image/upload/c_limit,w_1200,q_auto,f_auto"
@@ -187,19 +188,10 @@ const images = [
   },
 ] satisfies readonly GalleryImageData[]
 
-export const metadata: Metadata = {
-  title: "Hospitality | Bookmeaflight",
-  description:
-    "Hotels, retreats and wellness spaces with a clear sense of place.",
-}
+const description = "Photography of hotels, retreats and wellness spaces."
+
+export const metadata = pageMetadata("Hospitality | Bookmeaflight", description, "/hospitality")
 
 export default function Hospitality() {
-  return (
-    <section className="bg-stone-100" aria-labelledby="hospitality-heading">
-      <h1 id="hospitality-heading" className="sr-only">
-        Hospitality
-      </h1>
-      <GalleryGrid images={images} />
-    </section>
-  )
+  return <PortfolioPage title="Hospitality" description={description} images={images} />
 }

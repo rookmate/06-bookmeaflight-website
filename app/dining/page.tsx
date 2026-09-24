@@ -1,5 +1,6 @@
-import type { Metadata } from "next"
-import GalleryGrid, { type GalleryImageData } from "../components/GalleryGrid"
+import type { GalleryImageData } from "../components/GalleryGrid"
+import PortfolioPage from "../components/PortfolioPage"
+import { pageMetadata } from "../siteMetadata"
 
 const cloudinaryBaseURL =
   "https://res.cloudinary.com/dnwbkkjpo/image/upload/c_limit,w_1200,q_auto,f_auto"
@@ -127,18 +128,10 @@ const images = [
   },
 ] satisfies readonly GalleryImageData[]
 
-export const metadata: Metadata = {
-  title: "Dining | Bookmeaflight",
-  description: "Food, service and atmosphere framed with understated luxury.",
-}
+const description = "Food, drinks and restaurant photography."
+
+export const metadata = pageMetadata("Dining | Bookmeaflight", description, "/dining")
 
 export default function Dining() {
-  return (
-    <section className="bg-stone-100" aria-labelledby="dining-heading">
-      <h1 id="dining-heading" className="sr-only">
-        Dining
-      </h1>
-      <GalleryGrid images={images} />
-    </section>
-  )
+  return <PortfolioPage title="Dining" description={description} images={images} />
 }

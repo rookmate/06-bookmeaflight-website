@@ -1,13 +1,14 @@
-import type { Metadata } from "next"
 import Header from "./Header.tsx"
 import Footer from "./Footer.tsx"
+import { pageMetadata } from "./siteMetadata"
 
 import "./globals.css"
 
-export const metadata: Metadata = {
-  title: "Bookmeaflight",
-  description: "Bookmeaflight portfolio website",
-}
+export const metadata = pageMetadata(
+  "Bookmeaflight | Hospitality, fashion & dining photography",
+  "Travel and lifestyle photography for hotels, fashion and dining brands. Explore the Bookmeaflight portfolio and get in touch about your next project.",
+  "/",
+)
 
 export default function RootLayout({
   children,
