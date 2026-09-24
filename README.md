@@ -13,10 +13,11 @@ Bookmeaflight is a wellness content creation brand that showcases curated experi
 ## Features
 
 - **Responsive Design** - Parser-discoverable, art-directed hero imagery and mobile-first layouts
-- **Image Gallery** - Geometry-matched responsive thumbnails with native lazy loading and an on-demand, display-sized high-resolution lightbox
+- **Image Gallery** - Visible, linked thumbnails even without JavaScript, plus a lightbox with previous/next controls, arrow-key navigation and display-sized images
 - **Smooth Navigation** - Sticky site navigation across every portfolio route
 - **Performance Optimized** - Bounded Cloudinary inputs, tightly sized Next Image output and compressed production-payload budgets
 - **Modern UI** - Clean, minimalist design with Tailwind CSS
+- **Search and Sharing** - Canonical URLs, Open Graph and Twitter previews, sitemap and robots.txt
 
 ## Tech Stack
 
@@ -54,7 +55,7 @@ app/
 1. **Install dependencies**:
 
    ```bash
-   npm install
+   npm ci
    ```
 
 2. **Run the development server**:
@@ -74,6 +75,14 @@ app/
 - `npm run lint` - Run ESLint
 - `npm run typecheck` - Run TypeScript checks
 - `npm test` - Build the production site and verify its static output and compressed payload budgets
+- `npm run test:static` - Verify an existing production build
+- `npm run test:e2e` - Build and run browser tests in desktop Chromium and mobile WebKit
+
+Install the test browsers once with `npx playwright install chromium webkit`. To run browser tests against a build you already made, use `npx playwright test`. Playwright starts and stops a local production server on port 3186. Tests cover keyboard focus, lightbox navigation and dismissal, image failures, responsive navigation, and galleries without JavaScript. Image responses are mocked for repeatable interaction tests; inspect the real photography separately when changing crops or image URLs.
+
+GitHub Actions runs the dependency audit, lint, production build, static tests, type checks and browser tests on pushes and pull requests. Failed browser runs include screenshots and traces in the workflow artifacts.
+
+The canonical production origin is `https://www.bookmeaflight.eu`, matching the live domain redirect. Update `app/siteMetadata.ts` if the production domain changes. The sitemap includes the homepage and each entry in `app/portfolioSections.ts`.
 
 ## Contact
 

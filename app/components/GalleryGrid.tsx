@@ -1,7 +1,10 @@
 "use client"
 
-import { useState } from "react"
-import GalleryImage, { type GalleryImageData } from "./GalleryImage"
+import { useRef, useState } from "react"
+import GalleryImage, {
+  type GalleryImageData,
+  type GalleryPreview,
+} from "./GalleryImage"
 import GalleryLightbox from "./GalleryLightbox"
 
 export type { GalleryImageData } from "./GalleryImage"
@@ -11,13 +14,21 @@ interface GalleryGridProps {
 }
 
 interface LightboxSelection {
-  readonly image: GalleryImageData
-  readonly previewSrc: string
-  readonly aspectRatio: number
+  readonly index: number
+  readonly preview?: GalleryPreview
 }
 
 export default function GalleryGrid({ images }: GalleryGridProps) {
   const [selection, setSelection] = useState<LightboxSelection | null>(null)
+  const previews = useRef(new Map<string, GalleryPreview>())
+
+  function selectImage(index: number) {
+    const nextIndex = (index + images.length) % images.length
+    setSelection({
+      index: nextIndex,
+      preview: previews.current.get(images[nextIndex].src),
+    })
+  }
 
   return (
     <>
@@ -29,9 +40,8 @@ export default function GalleryGrid({ images }: GalleryGridProps) {
               src={image.src}
               alt={image.alt}
               preload={index === 0}
-              onOpen={(previewSrc, aspectRatio) =>
-                setSelection({ image, previewSrc, aspectRatio })
-              }
+              onOpen={() => selectImage(index)}
+              onPreviewLoad={(preview) => previews.current.set(image.src, preview)}
             />
           ))}
         </div>
@@ -39,10 +49,12 @@ export default function GalleryGrid({ images }: GalleryGridProps) {
 
       {selection && (
         <GalleryLightbox
-          src={selection.image.src}
-          previewSrc={selection.previewSrc}
-          alt={selection.image.alt}
-          aspectRatio={selection.aspectRatio}
+          image={images[selection.index]}
+          preview={selection.preview}
+          index={selection.index}
+          count={images.length}
+          onPrevious={() => selectImage(selection.index - 1)}
+          onNext={() => selectImage(selection.index + 1)}
           onClose={() => setSelection(null)}
         />
       )}
