@@ -112,6 +112,16 @@ for (const route of routes) {
     )
 
     assert.doesNotMatch(html, /Load More Images/)
+    assert.doesNotMatch(html, /<img[^>]*opacity-0/)
+
+    const canonical = `https://www.bookmeaflight.eu${route.pathname === "/" ? "" : route.pathname}`
+    assert.ok(html.includes(`<link rel="canonical" href="${canonical}"`))
+    assert.match(html, /property="og:image" content="https:\/\/res\.cloudinary\.com\//)
+    assert.match(html, /property="og:image:width" content="1200"/)
+    assert.match(html, /name="twitter:card" content="summary_large_image"/)
+    if (route.pathname !== "/") {
+      assert.doesNotMatch(html, /<h1[^>]*sr-only/)
+    }
   })
 }
 
@@ -141,6 +151,16 @@ test("homepage has the expected portfolio navigation hierarchy", async () => {
   )
   assert.equal(countMatches(html, /<h2(?:\s|>)/g), 3)
   assert.equal(countMatches(html, /<h3(?:\s|>)/g), 0)
+})
+
+test("sitemap lists canonical portfolio URLs and robots points to it", async () => {
+  const sitemap = await readFile(new URL("../.next/server/app/sitemap.xml.body", import.meta.url), "utf8")
+  const robots = await readFile(new URL("../.next/server/app/robots.txt.body", import.meta.url), "utf8")
+  assert.equal(countMatches(sitemap, /<loc>/g), routes.length)
+  for (const route of routes) {
+    assert.ok(sitemap.includes(`<loc>https://www.bookmeaflight.eu${route.pathname}</loc>`))
+  }
+  assert.match(robots, /Sitemap: https:\/\/www\.bookmeaflight\.eu\/sitemap\.xml/)
 })
 
 test("production routes stay within compressed document and asset budgets", async () => {

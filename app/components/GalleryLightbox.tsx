@@ -1,126 +1,212 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import type { GalleryImageData, GalleryPreview } from "./GalleryImage"
 
-const THUMBNAIL_TRANSFORMATION = "c_limit,w_1200,q_auto,f_auto"
 const LIGHTBOX_WIDTHS = [1200, 1600, 2400] as const
+const controlClassName =
+  "pointer-events-auto inline-flex h-11 items-center justify-center rounded-md border border-white/30 px-4 text-sm text-white hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
 
 interface GalleryLightboxProps {
-  readonly src: string
-  readonly previewSrc: string
-  readonly alt: string
-  readonly aspectRatio: number
+  readonly image: GalleryImageData
+  readonly preview?: GalleryPreview
+  readonly index: number
+  readonly count: number
+  readonly onPrevious: () => void
+  readonly onNext: () => void
   readonly onClose: () => void
 }
 
-function getLightboxSrc(src: string, width: number) {
-  return src.replace(
-    THUMBNAIL_TRANSFORMATION,
-    `c_limit,w_${width},q_auto,f_auto`,
-  )
-}
-
-function getLightboxWidth(aspectRatio: number) {
+function getViewport() {
   const padding = window.innerWidth >= 768 ? 64 : 32
-  const availableWidth = window.innerWidth - padding
-  const availableHeight = window.innerHeight - padding
-  const renderedWidth = Math.min(
-    availableWidth,
-    availableHeight * aspectRatio,
-  )
-  const requiredWidth = Math.ceil(renderedWidth * window.devicePixelRatio)
-
-  return (
-    LIGHTBOX_WIDTHS.find((width) => width >= requiredWidth) ??
-    LIGHTBOX_WIDTHS[LIGHTBOX_WIDTHS.length - 1]
-  )
+  return {
+    width: window.innerWidth - padding,
+    // Two 44px control rows, two 16px gaps, and the dialog padding.
+    height: Math.max(1, window.innerHeight - padding - 120),
+    pixelRatio: window.devicePixelRatio,
+  }
 }
 
 export default function GalleryLightbox({
-  src,
-  previewSrc,
-  alt,
-  aspectRatio,
+  image,
+  preview,
+  index,
+  count,
+  onPrevious,
+  onNext,
   onClose,
 }: GalleryLightboxProps) {
   const dialogRef = useRef<HTMLDialogElement>(null)
-  const [isHighResolutionLoaded, setIsHighResolutionLoaded] = useState(false)
-  const highResolutionSrc = getLightboxSrc(
-    src,
-    getLightboxWidth(aspectRatio),
-  )
+  const [viewport, setViewport] = useState(getViewport)
 
   useEffect(() => {
     const dialog = dialogRef.current
     const root = document.documentElement
     const previousOverflow = root.style.overflow
+    const updateViewport = () => setViewport(getViewport())
 
     root.style.overflow = "hidden"
-
-    if (dialog && !dialog.open) {
-      dialog.showModal()
-    }
+    dialog?.showModal()
+    window.addEventListener("resize", updateViewport)
 
     return () => {
       root.style.overflow = previousOverflow
+      window.removeEventListener("resize", updateViewport)
     }
   }, [])
 
   return (
     <dialog
       ref={dialogRef}
-      aria-label={`Expanded view: ${alt}`}
+      aria-label={`Expanded view: ${image.alt}`}
       onClose={onClose}
-      onClick={(event) => {
-        if (event.target === event.currentTarget) {
-          event.currentTarget.close()
+      onKeyDown={(event) => {
+        if (event.altKey || event.ctrlKey || event.metaKey) return
+        if (event.key === "Tab") {
+          const controls = event.currentTarget.querySelectorAll<HTMLElement>(
+            "button, a[href]",
+          )
+          const first = controls[0]
+          const last = controls[controls.length - 1]
+          if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault()
+            last.focus()
+          } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault()
+            first.focus()
+          }
+          return
+        }
+        if (event.shiftKey || count < 2) return
+        if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+          event.preventDefault()
+          if (event.key === "ArrowLeft") onPrevious()
+          else onNext()
         }
       }}
-      className="fixed inset-0 m-0 h-dvh max-h-none w-screen max-w-none overflow-hidden border-0 bg-transparent p-4 backdrop:bg-stone-950/80 backdrop:backdrop-blur-sm md:p-8"
+      onClick={(event) => {
+        if (event.target === event.currentTarget) dialogRef.current?.close()
+      }}
+      className="fixed inset-0 m-0 h-dvh max-h-none w-screen max-w-none flex-col gap-4 overflow-hidden border-0 bg-transparent p-4 text-white backdrop:bg-stone-950 open:flex md:p-8"
     >
-      <button
-        type="button"
-        autoFocus
-        aria-label="Close expanded image"
-        onClick={() => dialogRef.current?.close()}
-        className="absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center rounded-md border border-white/30 bg-stone-950/60 text-white transition-colors duration-150 hover:bg-stone-950 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-stone-950 md:right-6 md:top-6"
-      >
-        <svg
-          aria-hidden="true"
-          viewBox="0 0 24 24"
-          className="h-5 w-5"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.75"
+      <div className="pointer-events-none flex h-11 shrink-0 items-center justify-between gap-4">
+        <p role="status" aria-atomic="true" className="text-sm text-stone-200">
+          Image {index + 1} of {count}
+        </p>
+        <button
+          type="button"
+          autoFocus
+          aria-label="Close expanded image"
+          onClick={() => dialogRef.current?.close()}
+          className={controlClassName}
         >
-          <path d="M5 5l14 14M19 5L5 19" />
-        </svg>
-      </button>
+          Close
+        </button>
+      </div>
 
-      <div className="pointer-events-none relative h-full w-full">
-        {/* eslint-disable-next-line @next/next/no-img-element -- Reuses the optimizer URL already loaded by the selected thumbnail. */}
-        <img
-          src={previewSrc}
-          alt=""
-          aria-hidden="true"
-          className={`pointer-events-auto absolute inset-0 h-full w-full object-contain transition-opacity duration-200 ${
-            isHighResolutionLoaded ? "opacity-0" : "opacity-100"
-          }`}
+      <div className="pointer-events-none flex min-h-0 flex-1 items-center justify-center">
+        <LightboxPhoto
+          key={image.src}
+          image={image}
+          preview={preview}
+          viewport={viewport}
         />
+      </div>
 
-        {/* eslint-disable-next-line @next/next/no-img-element -- Cloudinary serves one source matched to the selected image geometry. */}
+      <div className="pointer-events-none flex h-11 shrink-0 items-center justify-center gap-3">
+        {count > 1 && (
+          <>
+            <button
+              type="button"
+              onClick={onPrevious}
+              className={controlClassName}
+              aria-label="Previous image"
+            >
+              <span aria-hidden="true" className="mr-2">←</span>
+              Previous
+            </button>
+            <button
+              type="button"
+              onClick={onNext}
+              className={controlClassName}
+              aria-label="Next image"
+            >
+              Next <span aria-hidden="true" className="ml-2">→</span>
+            </button>
+          </>
+        )}
+      </div>
+    </dialog>
+  )
+}
+
+interface LightboxPhotoProps {
+  readonly image: GalleryImageData
+  readonly preview?: GalleryPreview
+  readonly viewport: ReturnType<typeof getViewport>
+}
+
+function LightboxPhoto({ image, preview, viewport }: LightboxPhotoProps) {
+  const [aspectRatio, setAspectRatio] = useState(preview?.aspectRatio ?? null)
+  const [previewFailed, setPreviewFailed] = useState(false)
+  const [loadedSrc, setLoadedSrc] = useState("")
+  const [failedSrc, setFailedSrc] = useState("")
+  const ratio = aspectRatio ?? 1
+  const width = Math.min(viewport.width, viewport.height * ratio)
+  const sourceWidth =
+    LIGHTBOX_WIDTHS.find((size) => size >= width * viewport.pixelRatio) ?? 2400
+  const fullSrc = image.src.replace(
+    "c_limit,w_1200,q_auto,f_auto",
+    `c_limit,w_${sourceWidth},q_auto,f_auto`,
+  )
+  const isLoaded = loadedSrc === fullSrc
+  const hasFailed = failedSrc === fullSrc
+
+  return (
+    <div
+      className="pointer-events-auto relative max-h-full max-w-full"
+      style={{ width, height: width / ratio }}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element -- Reuse the loaded thumbnail while the display-sized Cloudinary image loads. */}
+      <img
+        src={preview?.src ?? image.src}
+        alt=""
+        aria-hidden="true"
+        onLoad={(event) => {
+          setAspectRatio(event.currentTarget.naturalWidth / event.currentTarget.naturalHeight)
+        }}
+        onError={() => {
+          setPreviewFailed(true)
+          setAspectRatio(1)
+        }}
+        className={`absolute inset-0 h-full w-full object-contain ${isLoaded || previewFailed ? "invisible" : ""}`}
+      />
+      {aspectRatio !== null && (
+        // eslint-disable-next-line @next/next/no-img-element -- Cloudinary serves a bounded image matched to the available space and pixel density.
         <img
-          src={highResolutionSrc}
-          alt={alt}
+          src={fullSrc}
+          alt={image.alt}
           loading="eager"
           decoding="async"
           fetchPriority="high"
-          onLoad={() => setIsHighResolutionLoaded(true)}
-          className={`pointer-events-auto absolute inset-0 h-full w-full object-contain transition-opacity duration-200 ${
-            isHighResolutionLoaded ? "opacity-100" : "opacity-0"
-          }`}
+          onLoad={() => setLoadedSrc(fullSrc)}
+          onError={() => setFailedSrc(fullSrc)}
+          className={`absolute inset-0 h-full w-full object-contain ${isLoaded ? "" : "invisible"}`}
         />
-      </div>
-    </dialog>
+      )}
+      {hasFailed && (
+        <p role="status" className="absolute inset-x-0 bottom-0 bg-stone-950/90 p-3 text-center text-sm">
+          {previewFailed ? "Image unavailable." : "Full-size image unavailable."}{" "}
+          <a
+            href={image.src}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-4"
+          >
+            Open image directly
+          </a>
+        </p>
+      )}
+    </div>
   )
 }
