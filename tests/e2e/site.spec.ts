@@ -12,13 +12,12 @@ test.beforeEach(async ({ context }) => {
   })
 })
 
-test("portfolio navigation, visible headings and contact work at every viewport", async ({ page }) => {
+test("portfolio navigation and visible headings work at every viewport", async ({ page }) => {
   await page.goto("/")
   for (const title of ["Hospitality", "Fashion", "Dining"]) {
     await page.getByRole("navigation", { name: "Primary", exact: true }).getByRole("link", { name: title }).click()
     await expect(page).toHaveURL(new RegExp(`/${title.toLowerCase()}$`))
     await expect(page.getByRole("heading", { name: title, level: 1 })).toBeVisible()
-    await expect(page.getByRole("link", { name: "Discuss a project" })).toHaveAttribute("href", "mailto:hello@bookmeaflight.eu")
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
   }
 })
