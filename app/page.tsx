@@ -1,4 +1,4 @@
-import NavigationTiles from "./components/NavigationTiles"
+import CategoryIndex from "./components/CategoryIndex"
 import InstagramIcon from "./components/InstagramIcon"
 import EmailIcon from "./components/EmailIcon"
 import HeroImage from "./components/HeroImage"
@@ -54,7 +54,7 @@ export default function Home() {
         </section>
 
         <div className="w-full flex-shrink-0">
-          <NavigationTiles />
+          <CategoryIndex />
         </div>
       </div>
     </div>

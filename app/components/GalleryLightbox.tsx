@@ -5,7 +5,7 @@ import type { GalleryImageData, GalleryPreview } from "./GalleryImage"
 
 const LIGHTBOX_WIDTHS = [1200, 1600, 2400] as const
 const controlClassName =
-  "pointer-events-auto inline-flex h-11 items-center justify-center rounded-md border border-white/30 px-4 text-sm text-white hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+  "pointer-events-auto inline-flex h-11 items-center justify-center rounded-md border border-stone-950/25 bg-stone-100/60 px-4 text-sm font-medium text-stone-950 hover:border-stone-950 hover:bg-stone-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-950"
 
 interface GalleryLightboxProps {
   readonly image: GalleryImageData
@@ -87,10 +87,11 @@ export default function GalleryLightbox({
       onClick={(event) => {
         if (event.target === event.currentTarget) dialogRef.current?.close()
       }}
-      className="fixed inset-0 m-0 h-dvh max-h-none w-screen max-w-none flex-col gap-4 overflow-hidden border-0 bg-transparent p-4 text-white backdrop:bg-stone-950 open:flex md:p-8"
+      // The blur is on the dialog, not its ::backdrop, which not every browser paints with a filter.
+      className="lightbox-veil fixed inset-0 m-0 h-dvh max-h-none w-screen max-w-none flex-col gap-4 overflow-hidden border-0 p-4 text-stone-950 backdrop:bg-transparent open:flex md:p-8"
     >
       <div className="pointer-events-none flex h-11 shrink-0 items-center justify-between gap-4">
-        <p role="status" aria-atomic="true" className="text-sm text-stone-200">
+        <p role="status" aria-atomic="true" className="text-sm font-medium text-stone-950">
           Image {index + 1} of {count}
         </p>
         <button
@@ -195,7 +196,7 @@ function LightboxPhoto({ image, preview, viewport }: LightboxPhotoProps) {
         />
       )}
       {hasFailed && (
-        <p role="status" className="absolute inset-x-0 bottom-0 bg-stone-950/90 p-3 text-center text-sm">
+        <p role="status" className="absolute inset-x-0 bottom-0 bg-stone-950/90 p-3 text-center text-sm text-white">
           {previewFailed ? "Image unavailable." : "Full-size image unavailable."}{" "}
           <a
             href={image.src}

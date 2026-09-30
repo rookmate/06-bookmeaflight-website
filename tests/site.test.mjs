@@ -7,13 +7,14 @@ const routes = [
   {
     pathname: "/",
     file: "index.html",
-    imageCount: 4,
-    lazyImageCount: 3,
+    // The hero plus five index photos for each of the three categories.
+    imageCount: 16,
+    lazyImageCount: 15,
     eagerImageCount: 1,
     highPriorityImageCount: 1,
     preloadCount: 0,
     lightboxTriggerCount: 0,
-    boundedImageCount: 3,
+    boundedImageCount: 15,
   },
   {
     pathname: "/hospitality",
