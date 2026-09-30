@@ -1,4 +1,4 @@
-import NavigationTiles from "./components/NavigationTiles"
+import CategoryIndex from "./components/CategoryIndex"
 import InstagramIcon from "./components/InstagramIcon"
 import EmailIcon from "./components/EmailIcon"
 import HeroImage from "./components/HeroImage"
@@ -17,8 +17,8 @@ export default function Home() {
                 Bookmeaflight
               </h1>
               <p className="max-w-2xl text-base leading-7 text-stone-200 sm:text-lg">
-                Travel-led visual storytelling for hospitality, fashion and
-                dining brands that want atmosphere to feel lived in.
+                Storytelling photography for hospitality, fashion and dining
+                brands that want the atmosphere to feel lived in.
               </p>
 
               <div className="grid gap-6 border-t border-white/20 pt-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
@@ -54,7 +54,7 @@ export default function Home() {
         </section>
 
         <div className="w-full flex-shrink-0">
-          <NavigationTiles />
+          <CategoryIndex />
         </div>
       </div>
     </div>

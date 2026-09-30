@@ -47,6 +47,21 @@ a {
   background: rgba(68, 64, 60, 0.16);
 }
 
+@layer components {
+  /* The lightbox veil. Without backdrop blur it is nearly opaque so the page cannot clash with the controls. */
+  .lightbox-veil {
+    background-color: rgb(245 245 244 / 0.96);
+  }
+
+  @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .lightbox-veil {
+      background-color: rgb(245 245 244 / 0.6);
+      -webkit-backdrop-filter: blur(40px);
+      backdrop-filter: blur(40px);
+    }
+  }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

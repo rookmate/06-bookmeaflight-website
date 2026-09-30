@@ -13,7 +13,8 @@ Bookmeaflight is a wellness content creation brand that showcases curated experi
 ## Features
 
 - **Responsive Design** - Parser-discoverable, art-directed hero imagery and mobile-first layouts
-- **Image Gallery** - Visible, linked thumbnails even without JavaScript, plus a lightbox with previous/next controls, arrow-key navigation and display-sized images
+- **Category Index** - The homepage lists each category with its first photos, taken from `app/galleryImages.ts`
+- **Image Gallery** - Visible, linked thumbnails even without JavaScript, plus a lightbox over a blurred view of the page with previous/next controls, arrow-key navigation and display-sized images
 - **Smooth Navigation** - Sticky site navigation across every portfolio route
 - **Performance Optimized** - Bounded Cloudinary inputs, tightly sized Next Image output and compressed production-payload budgets
 - **Modern UI** - Clean, minimalist design with Tailwind CSS
@@ -33,13 +34,14 @@ Bookmeaflight is a wellness content creation brand that showcases curated experi
 ```
 app/
 ├── components/          # Reusable UI components
+│   ├── CategoryIndex.tsx
 │   ├── EmailIcon.tsx
 │   ├── GalleryGrid.tsx
 │   ├── GalleryImage.tsx
 │   ├── GalleryLightbox.tsx
 │   ├── HeroImage.tsx
 │   ├── InstagramIcon.tsx
-│   ├── NavigationTiles.tsx
+│   ├── NavLinks.tsx
 │   └── PlaneIcon.tsx
 ├── dining/             # Dining portfolio page
 ├── fashion/            # Fashion portfolio page
@@ -82,7 +84,7 @@ Install the test browsers once with `npx playwright install chromium webkit`. To
 
 GitHub Actions runs the dependency audit, lint, production build, static tests, type checks and browser tests on pushes and pull requests. Failed browser runs include screenshots and traces in the workflow artifacts.
 
-The canonical production origin is `https://www.bookmeaflight.eu`, matching the live domain redirect. Update `app/siteMetadata.ts` if the production domain changes. The sitemap includes the homepage and each entry in `app/portfolioSections.ts`.
+The canonical production origin is `https://www.bookmeaflight.eu`, matching the live domain redirect. Update `app/siteMetadata.ts` if the production domain changes. The sitemap includes the homepage and each entry in `app/portfolioSections.ts`. Each category's photos live in `app/galleryImages.ts`, and the first five also appear on the homepage.
 
 ## Contact
 
