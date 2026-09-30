@@ -41,6 +41,7 @@ app/
 │   ├── GalleryLightbox.tsx
 │   ├── HeroImage.tsx
 │   ├── InstagramIcon.tsx
+│   ├── NavLinks.tsx
 │   └── PlaneIcon.tsx
 ├── dining/             # Dining portfolio page
 ├── fashion/            # Fashion portfolio page
