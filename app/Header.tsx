@@ -1,47 +1,28 @@
 import Link from "next/link"
+import NavLinks from "./components/NavLinks"
 import PlaneIcon from "./components/PlaneIcon"
+import { portfolioSections } from "./portfolioSections"
+
+const links = portfolioSections.map(({ title, href }) => ({ title, href }))
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-20 border-b border-white/10 bg-stone-950 px-5 py-3 md:px-8 lg:px-10">
-      <div className="mx-auto flex max-w-6xl flex-col gap-3 text-white md:flex-row md:items-center md:justify-between">
+    <header className="sticky top-0 z-20 border-b border-white/10 bg-stone-950 px-5 md:px-8 lg:px-10">
+      {/* One row at every width, 44px tall, so the sticky header stays thin on phones too. */}
+      <div className="mx-auto flex h-11 max-w-6xl items-center justify-between gap-3 text-white">
         <Link
           href="/"
-          className="flex items-center justify-center text-white"
+          className="flex h-11 items-center text-white"
           prefetch={false}
         >
           <PlaneIcon className="h-5 w-5 text-white" />
-          <span className="ml-2 text-sm font-medium tracking-[-0.02em]">
+          {/* Too narrow for the name and three links below 380px, so the icon stands in. */}
+          <span className="ml-2 text-sm font-medium tracking-[-0.02em] max-[379px]:sr-only">
             Bookmeaflight
           </span>
         </Link>
 
-        <nav
-          aria-label="Primary"
-          className="flex flex-wrap justify-center gap-x-6 gap-y-2"
-        >
-          <Link
-            href="/hospitality"
-            className="text-sm font-medium text-stone-200 hover:text-white"
-            prefetch={false}
-          >
-            Hospitality
-          </Link>
-          <Link
-            href="/fashion"
-            className="text-sm font-medium text-stone-200 hover:text-white"
-            prefetch={false}
-          >
-            Fashion
-          </Link>
-          <Link
-            href="/dining"
-            className="text-sm font-medium text-stone-200 hover:text-white"
-            prefetch={false}
-          >
-            Dining
-          </Link>
-        </nav>
+        <NavLinks links={links} />
       </div>
     </header>
   )

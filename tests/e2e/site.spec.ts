@@ -14,10 +14,16 @@ test.beforeEach(async ({ context }) => {
 
 test("portfolio navigation and visible headings work at every viewport", async ({ page }) => {
   await page.goto("/")
+  const primary = page.getByRole("navigation", { name: "Primary", exact: true })
+  // One thin row at every viewport, with no section marked on the homepage.
+  await expect(page.locator("header")).toHaveCSS("height", "45px")
+  await expect(primary.locator('[aria-current="page"]')).toHaveCount(0)
   for (const title of ["Hospitality", "Fashion", "Dining"]) {
-    await page.getByRole("navigation", { name: "Primary", exact: true }).getByRole("link", { name: title }).click()
+    await primary.getByRole("link", { name: title }).click()
     await expect(page).toHaveURL(new RegExp(`/${title.toLowerCase()}$`))
     await expect(page.getByRole("heading", { name: title, level: 1 })).toBeVisible()
+    await expect(primary.locator('[aria-current="page"]')).toHaveText(title)
+    await expect(page.locator("header")).toHaveCSS("height", "45px")
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
   }
 })
