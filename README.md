@@ -13,9 +13,9 @@ Bookmeaflight is a wellness content creation brand that showcases curated experi
 ## Features
 
 - **Responsive Design** - Parser-discoverable, art-directed hero imagery and mobile-first layouts
-- **Category Index** - The homepage lists each category with its first photos, taken from `app/galleryImages.ts`
-- **Image Gallery** - Visible, linked thumbnails even without JavaScript, plus a lightbox over a blurred view of the page with previous/next controls, arrow-key navigation and display-sized images
-- **Smooth Navigation** - Sticky site navigation across every portfolio route
+- **One Page** - The homepage shows one cover photo per category, taken from `app/galleryImages.ts`. Choosing one opens its gallery underneath, and the old category URLs redirect to it
+- **Image Gallery** - Square thumbnails that open a lightbox over a blurred view of the page, with previous/next controls, arrow-key navigation and display-sized images
+- **Smooth Navigation** - Sticky header links that open a category's gallery and mark it while it is open
 - **Performance Optimized** - Bounded Cloudinary inputs, tightly sized Next Image output and compressed production-payload budgets
 - **Modern UI** - Clean, minimalist design with Tailwind CSS
 - **Search and Sharing** - Canonical URLs, Open Graph and Twitter previews, sitemap and robots.txt
@@ -34,7 +34,8 @@ Bookmeaflight is a wellness content creation brand that showcases curated experi
 ```
 app/
 ├── components/          # Reusable UI components
-│   ├── CategoryIndex.tsx
+│   ├── CategoryGalleries.tsx
+│   ├── ChevronIcon.tsx
 │   ├── EmailIcon.tsx
 │   ├── GalleryGrid.tsx
 │   ├── GalleryImage.tsx
@@ -42,10 +43,8 @@ app/
 │   ├── HeroImage.tsx
 │   ├── InstagramIcon.tsx
 │   ├── NavLinks.tsx
-│   └── PlaneIcon.tsx
-├── dining/             # Dining portfolio page
-├── fashion/            # Fashion portfolio page
-├── hospitality/        # Hospitality portfolio page
+│   ├── PlaneIcon.tsx
+│   └── useHash.ts
 ├── Header.tsx          # Navigation header
 ├── Footer.tsx          # Site footer
 ├── layout.tsx          # Root layout

@@ -1,27 +1,26 @@
 "use client"
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { useHash } from "./useHash"
 
 interface NavLinksProps {
-  readonly links: readonly { readonly title: string; readonly href: string }[]
+  readonly links: readonly { readonly title: string; readonly id: string }[]
 }
 
 export default function NavLinks({ links }: NavLinksProps) {
-  const pathname = usePathname()
+  const hash = useHash()
 
   return (
     <nav aria-label="Primary" className="flex gap-x-5 sm:gap-x-6">
       {links.map((link) => (
-        <Link
-          key={link.href}
-          href={link.href}
-          aria-current={pathname === link.href ? "page" : undefined}
-          className="inline-flex h-11 items-center text-sm font-medium text-stone-300 underline-offset-[6px] hover:text-white aria-[current=page]:text-white aria-[current=page]:underline"
-          prefetch={false}
+        // Plain anchors, not Link, so the browser reports the hash change that opens the gallery.
+        <a
+          key={link.id}
+          href={`/#${link.id}`}
+          aria-current={hash === link.id ? "true" : undefined}
+          className="inline-flex h-11 items-center text-sm font-medium text-stone-300 underline-offset-[6px] hover:text-white aria-[current=true]:text-white aria-[current=true]:underline"
         >
           {link.title}
-        </Link>
+        </a>
       ))}
     </nav>
   )

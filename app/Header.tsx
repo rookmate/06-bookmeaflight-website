@@ -3,7 +3,7 @@ import NavLinks from "./components/NavLinks"
 import PlaneIcon from "./components/PlaneIcon"
 import { portfolioSections } from "./portfolioSections"
 
-const links = portfolioSections.map(({ title, href }) => ({ title, href }))
+const links = portfolioSections.map(({ title, id }) => ({ title, id }))
 
 export default function Header() {
   return (

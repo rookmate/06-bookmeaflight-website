@@ -23,7 +23,6 @@ const GALLERY_IMAGE_SIZES = [
 ].join(", ")
 
 interface GalleryImageProps extends GalleryImageData {
-  readonly preload?: boolean
   readonly onOpen: () => void
   readonly onPreviewLoad: (preview: GalleryPreview) => void
 }
@@ -31,7 +30,6 @@ interface GalleryImageProps extends GalleryImageData {
 export default function GalleryImage({
   src,
   alt,
-  preload = false,
   onOpen,
   onPreviewLoad,
 }: GalleryImageProps) {
@@ -72,7 +70,6 @@ export default function GalleryImage({
           fill
           className="object-cover"
           sizes={GALLERY_IMAGE_SIZES}
-          preload={preload}
           onLoad={(event) => {
             const image = event.currentTarget
             onPreviewLoad({
