@@ -3,51 +3,19 @@ import { readFile } from "node:fs/promises"
 import test from "node:test"
 import { gzipSync } from "node:zlib"
 
+// The site is one page. Galleries open on demand, so the document holds no gallery photos.
 const routes = [
   {
     pathname: "/",
     file: "index.html",
-    // The hero plus five index photos for each of the three categories.
-    imageCount: 16,
-    lazyImageCount: 15,
+    // The hero plus one cover photo for each of the three categories.
+    imageCount: 4,
+    lazyImageCount: 3,
     eagerImageCount: 1,
     highPriorityImageCount: 1,
     preloadCount: 0,
     lightboxTriggerCount: 0,
-    boundedImageCount: 15,
-  },
-  {
-    pathname: "/hospitality",
-    file: "hospitality.html",
-    imageCount: 45,
-    lazyImageCount: 44,
-    eagerImageCount: 0,
-    highPriorityImageCount: 0,
-    preloadCount: 1,
-    lightboxTriggerCount: 45,
-    boundedImageCount: 45,
-  },
-  {
-    pathname: "/fashion",
-    file: "fashion.html",
-    imageCount: 10,
-    lazyImageCount: 9,
-    eagerImageCount: 0,
-    highPriorityImageCount: 0,
-    preloadCount: 1,
-    lightboxTriggerCount: 10,
-    boundedImageCount: 10,
-  },
-  {
-    pathname: "/dining",
-    file: "dining.html",
-    imageCount: 30,
-    lazyImageCount: 29,
-    eagerImageCount: 0,
-    highPriorityImageCount: 0,
-    preloadCount: 1,
-    lightboxTriggerCount: 30,
-    boundedImageCount: 30,
+    boundedImageCount: 3,
   },
 ]
 
@@ -120,9 +88,6 @@ for (const route of routes) {
     assert.match(html, /property="og:image" content="https:\/\/res\.cloudinary\.com\//)
     assert.match(html, /property="og:image:width" content="1200"/)
     assert.match(html, /name="twitter:card" content="summary_large_image"/)
-    if (route.pathname !== "/") {
-      assert.doesNotMatch(html, /<h1[^>]*sr-only/)
-    }
   })
 }
 
@@ -152,6 +117,30 @@ test("homepage has the expected portfolio navigation hierarchy", async () => {
   )
   assert.equal(countMatches(html, /<h2(?:\s|>)/g), 3)
   assert.equal(countMatches(html, /<h3(?:\s|>)/g), 0)
+})
+
+test("category covers link to their gallery and the header to the same sections", async () => {
+  const html = await readFile(new URL("../.next/server/app/index.html", import.meta.url), "utf8")
+  for (const id of ["hospitality", "fashion", "dining"]) {
+    assert.equal(countMatches(html, new RegExp(`<a(?=[^>]*\\bid="${id}")(?=[^>]*\\bhref="#${id}")[^>]*>`, "g")), 1)
+    assert.equal(countMatches(html, new RegExp(`\\bhref="/#${id}"`, "g")), 1)
+  }
+})
+
+test("old category URLs redirect to their gallery", async () => {
+  const manifest = JSON.parse(await readFile(new URL("../.next/routes-manifest.json", import.meta.url), "utf8"))
+  const redirects = Object.fromEntries(manifest.redirects.map((redirect) => [redirect.source, redirect]))
+  for (const [source, id] of [
+    ["/hospitality", "hospitality"],
+    ["/hotels", "hospitality"],
+    ["/fashion", "fashion"],
+    ["/brands", "fashion"],
+    ["/dining", "dining"],
+    ["/restaurants", "dining"],
+  ]) {
+    assert.equal(redirects[source]?.destination, `/#${id}`)
+    assert.equal(redirects[source]?.statusCode, 308)
+  }
 })
 
 test("sitemap lists canonical portfolio URLs and robots points to it", async () => {

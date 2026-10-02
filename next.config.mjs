@@ -15,24 +15,20 @@ const nextConfig = {
     qualities: [75],
   },
   poweredByHeader: false,
+  // Each category used to have its own page. Old links land on its gallery on the one page.
   async redirects() {
     return [
-      {
-        source: "/hotels",
-        destination: "/hospitality",
-        permanent: true,
-      },
-      {
-        source: "/brands",
-        destination: "/fashion",
-        permanent: true,
-      },
-      {
-        source: "/restaurants",
-        destination: "/dining",
-        permanent: true,
-      },
-    ]
+      ["/hospitality", "hospitality"],
+      ["/hotels", "hospitality"],
+      ["/fashion", "fashion"],
+      ["/brands", "fashion"],
+      ["/dining", "dining"],
+      ["/restaurants", "dining"],
+    ].map(([source, id]) => ({
+      source,
+      destination: `/#${id}`,
+      permanent: true,
+    }))
   },
 }
 
