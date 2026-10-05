@@ -2,6 +2,9 @@
   "name": "bookmeaflight-website",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -19,7 +22,7 @@
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",
-    "@types/node": "^20.19.43",
+    "@types/node": "^24.19.1",
     "@types/react": "^18.3.31",
     "eslint": "^9",
     "eslint-config-next": "16.3.6",
@@ -28,6 +31,7 @@
     "typescript": "^5.9.3"
   },
   "overrides": {
-    "postcss": "$postcss"
+    "postcss": "$postcss",
+    "braces": "npm:@dieub/braces-depth-guard@3.0.3-pn.3"
   }
 }
