@@ -28,6 +28,7 @@
     "typescript": "^5.9.3"
   },
   "overrides": {
-    "postcss": "$postcss"
+    "postcss": "$postcss",
+    "braces": "npm:@dieub/braces-depth-guard@3.0.3-pn.3"
   }
 }
