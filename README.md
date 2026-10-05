@@ -53,9 +53,13 @@ app/
 
 ## Getting Started
 
-1. **Install dependencies**:
+Use Node.js 24. The `.node-version` file selects it for fnm and GitHub Actions; Vercel uses the `engines.node` setting in `package.json`.
+
+1. Install Node 24 and dependencies:
 
    ```bash
+   fnm install
+   fnm use
    npm ci
    ```
 
