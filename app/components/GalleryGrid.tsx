@@ -2,15 +2,14 @@
 
 import { useRef, useState } from "react"
 import GalleryImage, {
-  type GalleryImageData,
   type GalleryPreview,
 } from "./GalleryImage"
 import GalleryLightbox from "./GalleryLightbox"
-
-export type { GalleryImageData } from "./GalleryImage"
+import type { GalleryImageData } from "../galleryImages"
 
 interface GalleryGridProps {
   readonly images: readonly GalleryImageData[]
+  readonly active: boolean
 }
 
 interface LightboxSelection {
@@ -18,9 +17,11 @@ interface LightboxSelection {
   readonly preview?: GalleryPreview
 }
 
-export default function GalleryGrid({ images }: GalleryGridProps) {
+export default function GalleryGrid({ images, active }: GalleryGridProps) {
   const [selection, setSelection] = useState<LightboxSelection | null>(null)
   const previews = useRef(new Map<string, GalleryPreview>())
+  // A closing drawer can retain its photos, but never its modal or scroll lock.
+  if (!active && selection) setSelection(null)
 
   function selectImage(index: number) {
     const nextIndex = (index + images.length) % images.length
@@ -44,7 +45,7 @@ export default function GalleryGrid({ images }: GalleryGridProps) {
         ))}
       </div>
 
-      {selection && (
+      {active && selection && (
         <GalleryLightbox
           image={images[selection.index]}
           preview={selection.preview}

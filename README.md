@@ -13,19 +13,19 @@ Bookmeaflight is a wellness content creation brand that showcases curated experi
 ## Features
 
 - **Responsive Design** - Parser-discoverable, art-directed hero imagery and mobile-first layouts
-- **One Page** - The homepage shows one cover photo per category, taken from `app/galleryImages.ts`. Choosing one opens its gallery underneath, and the old category URLs redirect to it
+- **One Page** - The homepage shows one cover photo per category, taken from `app/galleryImages.ts`. Choosing one opens its gallery underneath, and the old category URLs redirect to it. Every gallery is rendered in the HTML and native hash links work without JavaScript
 - **Image Gallery** - Square thumbnails that open a lightbox over a blurred view of the page, with previous/next controls, arrow-key navigation and display-sized images
 - **Smooth Navigation** - Sticky header links that open a category's gallery and mark it while it is open
-- **Performance Optimized** - Bounded Cloudinary inputs, tightly sized Next Image output and compressed production-payload budgets
+- **Image Delivery** - A shared Cloudinary loader serves responsive images directly from the CDN. Hidden galleries use lazy loading; hovering or focusing a category preloads at most five thumbnails unless data saving is enabled
 - **Modern UI** - Clean, minimalist design with Tailwind CSS
 - **Search and Sharing** - Canonical URLs, Open Graph and Twitter previews, sitemap and robots.txt
 
 ## Tech Stack
 
-- **Framework**: Next.js 16 with App Router
+- **Framework**: Next.js 16 with App Router and React 19
 - **Styling**: Tailwind CSS
 - **Fonts**: System font stacks (no external font fetch at build time)
-- **Images**: Cloudinary for optimized image delivery
+- **Images**: Cloudinary via the custom Next Image loader in `app/cloudinary.ts`
 - **Icons**: Custom SVG components
 - **Language**: TypeScript
 
@@ -83,11 +83,17 @@ Use Node.js 24. The `.node-version` file selects it for fnm and GitHub Actions; 
 - `npm run test:static` - Verify an existing production build
 - `npm run test:e2e` - Build and run browser tests in desktop Chromium and mobile WebKit
 
-Install the test browsers once with `npx playwright install chromium webkit`. To run browser tests against a build you already made, use `npx playwright test`. Playwright starts and stops a local production server on port 3186. Tests cover keyboard focus, lightbox navigation and dismissal, image failures, responsive navigation, and galleries without JavaScript. Image responses are mocked for repeatable interaction tests; inspect the real photography separately when changing crops or image URLs.
+Install the test browsers once with `npx playwright install chromium webkit`. To run browser tests against a build you already made, use `npx playwright test`. Playwright starts and stops a local production server on port 3186. Tests cover keyboard focus, lightbox navigation and dismissal, browser Back/Forward, image failures, bounded prefetching, responsive navigation, and galleries without JavaScript. Interaction tests mock image responses. `tests/e2e/image-delivery.spec.ts` separately checks real Cloudinary delivery of the hero, a thumbnail and an expanded image, so that test requires network access.
 
 GitHub Actions runs the dependency audit, lint, production build, static tests, type checks and browser tests on pushes and pull requests. Failed browser runs include screenshots and traces in the workflow artifacts.
 
-The canonical production origin is `https://www.bookmeaflight.eu`, matching the live domain redirect. Update `app/siteMetadata.ts` if the production domain changes. The sitemap includes the homepage and each entry in `app/portfolioSections.ts`. Each category's photos live in `app/galleryImages.ts`, and the first five also appear on the homepage.
+The canonical production origin is `https://www.bookmeaflight.eu`, matching the live domain redirect. Update `app/siteMetadata.ts` if the production domain changes. The sitemap lists the single canonical homepage. Each category's photos live in `app/galleryImages.ts` as versioned Cloudinary asset paths, and its first photo is the category cover. `app/cloudinary.ts` owns delivery widths, quality and crops; the site does not proxy these images through `/_next/image`.
+
+### Dependency overrides
+
+`postcss` stays pinned to the declared patched version. Tailwind 3 and `postcss-nested` still request `postcss-selector-parser` 6, so the override selects the upstream 7.1.6 fix for [GHSA-rj75-hqrm-r3gf](https://github.com/postcss/postcss-selector-parser/security/advisories/GHSA-rj75-hqrm-r3gf). The production CSS build and desktop/mobile browser tests verify compatibility. Remove the override when the dependency chain requests a patched version itself.
+
+The existing `braces` override uses the pinned `@dieub/braces-depth-guard` fork. Keep its removal tied to an upstream fix and a clean audit; changing a package name alone is not evidence that a security issue is resolved.
 
 ## Contact
 

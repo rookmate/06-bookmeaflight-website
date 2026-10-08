@@ -1,7 +1,9 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import type { GalleryImageData, GalleryPreview } from "./GalleryImage"
+import type { GalleryPreview } from "./GalleryImage"
+import type { GalleryImageData } from "../galleryImages"
+import { cloudinaryImageUrl } from "../cloudinary"
 
 const LIGHTBOX_WIDTHS = [1200, 1600, 2400] as const
 const controlClassName =
@@ -156,10 +158,7 @@ function LightboxPhoto({ image, preview, viewport }: LightboxPhotoProps) {
   const width = Math.min(viewport.width, viewport.height * ratio)
   const sourceWidth =
     LIGHTBOX_WIDTHS.find((size) => size >= width * viewport.pixelRatio) ?? 2400
-  const fullSrc = image.src.replace(
-    "c_limit,w_1200,q_auto,f_auto",
-    `c_limit,w_${sourceWidth},q_auto,f_auto`,
-  )
+  const fullSrc = cloudinaryImageUrl({ src: image.src, width: sourceWidth })
   const isLoaded = loadedSrc === fullSrc
   const hasFailed = failedSrc === fullSrc
 
@@ -170,7 +169,7 @@ function LightboxPhoto({ image, preview, viewport }: LightboxPhotoProps) {
     >
       {/* eslint-disable-next-line @next/next/no-img-element -- Reuse the loaded thumbnail while the display-sized Cloudinary image loads. */}
       <img
-        src={preview?.src ?? image.src}
+        src={preview?.src ?? cloudinaryImageUrl({ src: image.src, width: 384 })}
         alt=""
         aria-hidden="true"
         onLoad={(event) => {
@@ -199,7 +198,7 @@ function LightboxPhoto({ image, preview, viewport }: LightboxPhotoProps) {
         <p role="status" className="absolute inset-x-0 bottom-0 bg-stone-950/90 p-3 text-center text-sm text-white">
           {previewFailed ? "Image unavailable." : "Full-size image unavailable."}{" "}
           <a
-            href={image.src}
+            href={cloudinaryImageUrl({ src: image.src, width: 2400 })}
             target="_blank"
             rel="noopener noreferrer"
             className="underline underline-offset-4"

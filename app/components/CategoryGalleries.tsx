@@ -6,6 +6,7 @@ import { portfolioSections } from "../portfolioSections"
 import ChevronIcon from "./ChevronIcon"
 import GalleryGrid from "./GalleryGrid"
 import { clearHash, useHash } from "./useHash"
+import { prefetchGallery } from "./prefetchGallery"
 
 const COVER_IMAGE_SIZES = [
   "(min-width: 1152px) 347px",
@@ -27,23 +28,31 @@ export default function CategoryGalleries() {
 
   const openId = openSection?.id
   useEffect(() => {
-    const cover = openId && document.getElementById(openId)
+    const cover = openId && document.getElementById(`${openId}-cover`)
     if (cover) return glideTo(cover)
   }, [openId])
 
   return (
-    <div className="mx-auto max-w-6xl px-5 py-8 md:px-8 md:py-10 lg:px-10 lg:py-12">
+    <div
+      className="portfolio mx-auto max-w-6xl px-5 py-8 md:px-8 md:py-10 lg:px-10 lg:py-12"
+      data-enhanced={hash === null ? undefined : ""}
+    >
       <nav aria-label="Portfolio categories" className="grid grid-cols-3 gap-2 md:gap-4">
         {portfolioSections.map((section) => {
           const isOpen = section === openSection
           return (
             <a
               key={section.id}
-              id={section.id}
+              id={`${section.id}-cover`}
               href={`#${section.id}`}
-              aria-expanded={isOpen}
-              aria-controls="gallery-drawer"
+              aria-expanded={hash === null ? undefined : isOpen}
+              aria-controls={section.id}
+              onPointerEnter={(event) => {
+                if (event.pointerType === "mouse") prefetchGallery(section.id)
+              }}
+              onFocus={() => prefetchGallery(section.id)}
               onClick={(event) => {
+                if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
                 if (!isOpen) return
                 event.preventDefault()
                 clearHash()
@@ -60,6 +69,7 @@ export default function CategoryGalleries() {
                 />
               </div>
               <h2
+                id={`${section.id}-label`}
                 className={`mt-2 flex items-center justify-between text-base font-semibold tracking-[-0.03em] text-stone-900 underline-offset-[6px] group-hover:underline sm:text-2xl md:mt-3 lg:text-3xl ${isOpen ? "underline" : ""}`}
               >
                 {section.title}
@@ -72,16 +82,27 @@ export default function CategoryGalleries() {
         })}
       </nav>
 
-      <div id="gallery-drawer" className="gallery-drawer" data-open={openSection ? "" : undefined}>
+      <div
+        id="gallery-drawer"
+        className="gallery-drawer"
+        data-open={openSection ? "" : undefined}
+        inert={hash !== null && !openSection}
+      >
         {/* The clip box is 4px wider and taller than the grid so focus rings on the edge photos show. */}
         <div className="-mx-1 -mb-1 overflow-hidden">
-          {shownSection && (
-            <div key={shownSection.id} className="gallery-fade px-1 pb-1 pt-6 md:pt-8">
+          {portfolioSections.map((section) => (
+            <section
+              key={section.id}
+              id={section.id}
+              aria-labelledby={`${section.id}-label`}
+              data-shown={section === shownSection ? "" : undefined}
+              className="gallery-panel gallery-fade scroll-mt-16 px-1 pb-1 pt-6 md:pt-8"
+            >
               <div className="border-t border-stone-300 pt-6 md:pt-8">
-                <GalleryGrid images={shownSection.images} />
+                <GalleryGrid images={section.images} active={section === openSection} />
               </div>
-            </div>
-          )}
+            </section>
+          ))}
         </div>
       </div>
     </div>

@@ -1,9 +1,9 @@
 import { expect, type Page, test } from "@playwright/test"
 
-// Keep interaction tests independent of Cloudinary and the image optimizer cache.
+// Keep interaction tests independent of Cloudinary availability.
 // Use different aspect ratios to exercise photo sizing when navigating.
 test.beforeEach(async ({ context }) => {
-  await context.route(/\/_next\/image\?|https:\/\/res\.cloudinary\.com\//, async (route) => {
+  await context.route(/https:\/\/res\.cloudinary\.com\//, async (route) => {
     const landscape = route.request().url().includes("purse2")
     await route.fulfill({
       contentType: "image/svg+xml",
@@ -17,7 +17,7 @@ const covers = (page: Page) => page.getByRole("navigation", { name: "Portfolio c
 // How far a cover photo is from resting at its 64px scroll margin under the header.
 // Browsers round scroll positions to device pixels, so allow one CSS pixel.
 const coverOffset = (page: Page, id: string) =>
-  page.evaluate((id) => Math.abs(document.getElementById(id)!.getBoundingClientRect().top - 64), id)
+  page.evaluate((id) => Math.abs(document.getElementById(`${id}-cover`)!.getBoundingClientRect().top - 64), id)
 
 /** Opens the Fashion gallery from its cover photo on the one page. */
 async function openFashion(page: Page) {
@@ -76,7 +76,7 @@ test("a cover opens its gallery under the header, another replaces it, and the o
 test("the footer sits as far below the category row as the hero sits above it", async ({ page }) => {
   await page.goto("/")
   const gaps = await page.evaluate(() => {
-    const hero = document.querySelector("main section")!.getBoundingClientRect()
+    const hero = document.querySelector("main > div section")!.getBoundingClientRect()
     const row = document.querySelector('nav[aria-label="Portfolio categories"]')!.getBoundingClientRect()
     const footer = document.querySelector("footer")!.getBoundingClientRect()
     return { above: Math.round(row.top - hero.bottom), below: Math.round(footer.top - row.bottom) }
@@ -145,6 +145,59 @@ test("buttons navigate and close without leaving the gallery", async ({ page }) 
   await expect(page).toHaveURL(/\/#fashion$/)
 })
 
+test("Back closes the lightbox and Forward reopens only the gallery", async ({ page }) => {
+  await openFashion(page)
+  await thumbnails(page).first().click()
+  await expect(page.getByRole("dialog")).toBeVisible()
+  await page.goBack()
+  await expect(page).toHaveURL(/\/$/)
+  await expect(page.getByRole("dialog")).toHaveCount(0)
+  await expect(page.locator("html")).not.toHaveCSS("overflow", "hidden")
+  await expect(page.locator("#gallery-drawer")).toHaveAttribute("inert", "")
+  await page.goForward()
+  await expect(thumbnails(page)).toHaveCount(10)
+  await expect(page.getByRole("dialog")).toHaveCount(0)
+  await thumbnails(page).first().click()
+  await expect(page.getByRole("dialog")).toBeVisible()
+})
+
+test("the homepage does not download photos from hidden galleries", async ({ page }) => {
+  const requestedImages = new Set<string>()
+  page.on("request", (request) => {
+    const url = new URL(request.url())
+    if (url.hostname === "res.cloudinary.com") requestedImages.add(url.pathname.split("/").at(-1)!)
+  })
+  await page.goto("/", { waitUntil: "networkidle" })
+  expect([...requestedImages]).toEqual(expect.arrayContaining([
+    expect.stringMatching(/^homepage3[af]\.jpg$/),
+  ]))
+  expect([...requestedImages].every((name) => [
+    "homepage3a.jpg", "homepage3f.jpg", "kanz-pool-room.jpg", "mp-mustard-purse.jpg", "coya-ceviche.jpg",
+  ].includes(name))).toBe(true)
+})
+
+test("category focus prefetches only the first row without opening the gallery", async ({ page }) => {
+  await page.goto("/")
+  await covers(page).getByRole("link", { name: "Fashion" }).focus()
+  const preloads = page.locator('link[rel="preload"][as="image"]')
+  await expect(preloads).toHaveCount(5)
+  await expect(thumbnails(page)).toHaveCount(0)
+  await expect(page).toHaveURL(/\/$/)
+  const sources = await preloads.evaluateAll((links) => links.map((link) => link.getAttribute("imagesrcset")))
+  expect(sources.every((source) => source?.includes("res.cloudinary.com") && !source.includes("_next/image"))).toBe(true)
+  await page.getByRole("navigation", { name: "Primary", exact: true }).getByRole("link", { name: "Fashion" }).focus()
+  await expect(preloads).toHaveCount(5)
+})
+
+test("data saving disables speculative gallery requests", async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "connection", { configurable: true, value: { saveData: true } })
+  })
+  await page.goto("/")
+  await covers(page).getByRole("link", { name: "Fashion" }).focus()
+  await expect(page.locator('link[rel="preload"][as="image"]')).toHaveCount(0)
+})
+
 test("photo clicks keep the lightbox open and empty space dismisses it", async ({ page }) => {
   await openFashion(page)
   await page.getByRole("link", { name: "View Mustard purse larger", exact: true }).first().click()
@@ -161,7 +214,7 @@ test("photo clicks keep the lightbox open and empty space dismisses it", async (
 })
 
 test("thumbnail failures still allow opening the full-size image", async ({ page }) => {
-  await page.route(/\/_next\/image\?.*mp-mustard-purse\.jpg/, (route) => route.abort())
+  await page.route(/res\.cloudinary\.com\/.*c_limit,w_(?:384|512|640|750|828|1080),.*mp-mustard-purse\.jpg/, (route) => route.abort())
   await openFashion(page)
   const trigger = page.getByRole("link", { name: "View Mustard purse larger", exact: true }).first()
   await expect(trigger).toContainText("Image unavailable")
@@ -170,7 +223,7 @@ test("thumbnail failures still allow opening the full-size image", async ({ page
 })
 
 test("failed full-size requests keep the preview and a direct link", async ({ page }) => {
-  await page.route("https://res.cloudinary.com/**", (route) => route.abort())
+  await page.route(/res\.cloudinary\.com\/.*c_limit,w_(?:1200|1600|2400),/, (route) => route.abort())
   await openFashion(page)
   const trigger = page.getByRole("link", { name: "View Mustard purse larger", exact: true }).first()
   await expect.poll(() => trigger.locator("img").evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0)
@@ -218,5 +271,24 @@ test.describe("without JavaScript", () => {
       await expect(photo).toBeVisible()
       await expect.poll(() => photo.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0)
     }
+  })
+
+  test("category links reveal photos and direct image links without JavaScript", async ({ page }) => {
+    await page.goto("/")
+    await covers(page).getByRole("link", { name: "Fashion" }).click()
+    await expect(thumbnails(page)).toHaveCount(10)
+    const first = thumbnails(page).first()
+    await expect(first).toHaveAttribute("href", /res\.cloudinary\.com\/.*w_2400,.*mp-mustard-purse\.jpg$/)
+    await expect.poll(() => first.locator("img").evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0)
+    await page.getByRole("navigation", { name: "Primary", exact: true }).getByRole("link", { name: "Dining" }).click()
+    await expect(thumbnails(page)).toHaveCount(30)
+    await page.goBack()
+    await expect(thumbnails(page)).toHaveCount(10)
+  })
+
+  test("an old category URL opens its gallery without JavaScript", async ({ page }) => {
+    await page.goto("/hotels")
+    await expect(page).toHaveURL(/\/#hospitality$/)
+    await expect(thumbnails(page)).toHaveCount(45)
   })
 })

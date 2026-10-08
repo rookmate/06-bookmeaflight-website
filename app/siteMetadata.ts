@@ -1,9 +1,15 @@
 import type { Metadata } from "next"
+import { cloudinaryImageUrl } from "./cloudinary"
 
 export const siteUrl = "https://www.bookmeaflight.eu"
 
-const shareImage =
-  "https://res.cloudinary.com/dnwbkkjpo/image/upload/c_fill,w_1200,h_630,g_auto,q_85,f_jpg/v1718299505/homepage3a.jpg"
+const shareImage = cloudinaryImageUrl({
+  src: "v1718299505/homepage3a.jpg",
+  width: 1200,
+  quality: 85,
+  format: "jpg",
+  crop: { mode: "fill", width: 1200, height: 630 },
+})
 
 export function pageMetadata(
   title: string,

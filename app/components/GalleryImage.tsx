@@ -2,11 +2,8 @@
 
 import Image from "next/image"
 import { useState } from "react"
-
-export interface GalleryImageData {
-  readonly src: string
-  readonly alt: string
-}
+import { cloudinaryImageUrl } from "../cloudinary"
+import type { GalleryImageData } from "../galleryImages"
 
 export interface GalleryPreview {
   readonly src: string
@@ -37,7 +34,7 @@ export default function GalleryImage({
 
   return (
     <a
-      href={src}
+      href={cloudinaryImageUrl({ src, width: 2400 })}
       aria-label={`View ${alt} larger`}
       aria-haspopup="dialog"
       onClick={(event) => {
