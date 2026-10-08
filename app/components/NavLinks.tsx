@@ -1,6 +1,7 @@
 "use client"
 
 import { useHash } from "./useHash"
+import { prefetchGallery } from "./prefetchGallery"
 
 interface NavLinksProps {
   readonly links: readonly { readonly title: string; readonly id: string }[]
@@ -17,6 +18,10 @@ export default function NavLinks({ links }: NavLinksProps) {
           key={link.id}
           href={`/#${link.id}`}
           aria-current={hash === link.id ? "true" : undefined}
+          onPointerEnter={(event) => {
+            if (event.pointerType === "mouse") prefetchGallery(link.id)
+          }}
+          onFocus={() => prefetchGallery(link.id)}
           className="inline-flex h-11 items-center text-sm font-medium text-stone-300 underline-offset-[6px] hover:text-white aria-[current=true]:text-white aria-[current=true]:underline"
         >
           {link.title}

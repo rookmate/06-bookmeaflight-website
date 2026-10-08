@@ -1,15 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "res.cloudinary.com",
-        port: "",
-        pathname: "/dnwbkkjpo/image/upload/**",
-        search: "",
-      },
-    ],
+    loader: "custom",
+    loaderFile: "./app/cloudinary.ts",
     deviceSizes: [640, 750, 828, 1080, 1200, 1536],
     imageSizes: [32, 48, 64, 96, 128, 256, 384, 512],
     qualities: [75],

@@ -1,10 +1,11 @@
 import { getImageProps } from "next/image"
+import { cloudinaryImageUrl } from "../cloudinary"
 
 const portraitHeroSrc =
-  "https://res.cloudinary.com/dnwbkkjpo/image/upload/c_limit,w_1200,q_auto,f_auto/v1718299505/homepage3f.jpg"
+  "v1718299505/homepage3f.jpg"
 
 const landscapeHeroSrc =
-  "https://res.cloudinary.com/dnwbkkjpo/image/upload/c_crop,w_1536,h_864,ar_16:9,g_auto,q_auto,f_auto/v1718299505/homepage3a.jpg"
+  "v1718299505/homepage3a.jpg"
 
 const commonImageProps = {
   alt: "",
@@ -20,6 +21,10 @@ export default function HeroImage() {
   } = getImageProps({
     ...commonImageProps,
     src: landscapeHeroSrc,
+    loader: (props) => cloudinaryImageUrl({
+      ...props,
+      crop: { mode: "crop", width: 1536, height: 864 },
+    }),
     width: 1536,
     height: 864,
   })

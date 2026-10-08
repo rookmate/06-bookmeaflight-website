@@ -3,19 +3,19 @@ import { readFile } from "node:fs/promises"
 import test from "node:test"
 import { gzipSync } from "node:zlib"
 
-// The site is one page. Galleries open on demand, so the document holds no gallery photos.
+// The full portfolio is in the HTML; CSS and lazy loading defer hidden images.
 const routes = [
   {
     pathname: "/",
     file: "index.html",
-    // The hero plus one cover photo for each of the three categories.
-    imageCount: 4,
-    lazyImageCount: 3,
+    // The hero, three covers, and 85 gallery photos.
+    imageCount: 89,
+    lazyImageCount: 88,
     eagerImageCount: 1,
     highPriorityImageCount: 1,
     preloadCount: 0,
-    lightboxTriggerCount: 0,
-    boundedImageCount: 3,
+    lightboxTriggerCount: 85,
+    boundedImageCount: 88,
   },
 ]
 
@@ -72,11 +72,12 @@ for (const route of routes) {
       ),
       1,
     )
-    assert.doesNotMatch(html, /\bw=(?:1920|2048|3840)\b/)
+    assert.doesNotMatch(html, /\/_next\/image\?/)
+    assert.doesNotMatch(html, /c_limit,w_(?:1920|2048|3840),/)
 
     const imageTags = html.match(/<img(?:\s|>)[^>]*>/g) ?? []
     assert.equal(
-      imageTags.filter((tag) => tag.includes("c_limit%2Cw_1200")).length,
+      imageTags.filter((tag) => tag.includes("res.cloudinary.com/dnwbkkjpo/image/upload/c_limit,w_")).length,
       route.boundedImageCount,
     )
 
@@ -122,7 +123,7 @@ test("homepage has the expected portfolio navigation hierarchy", async () => {
 test("category covers link to their gallery and the header to the same sections", async () => {
   const html = await readFile(new URL("../.next/server/app/index.html", import.meta.url), "utf8")
   for (const id of ["hospitality", "fashion", "dining"]) {
-    assert.equal(countMatches(html, new RegExp(`<a(?=[^>]*\\bid="${id}")(?=[^>]*\\bhref="#${id}")[^>]*>`, "g")), 1)
+    assert.equal(countMatches(html, new RegExp(`<a(?=[^>]*\\bid="${id}-cover")(?=[^>]*\\bhref="#${id}")[^>]*>`, "g")), 1)
     assert.equal(countMatches(html, new RegExp(`\\bhref="/#${id}"`, "g")), 1)
   }
 })

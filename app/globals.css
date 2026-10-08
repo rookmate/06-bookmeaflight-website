@@ -81,11 +81,23 @@ a {
       visibility 0s 500ms;
   }
 
-  .gallery-drawer[data-open] {
+  .gallery-drawer[data-open],
+  .portfolio:not([data-enhanced]):has(.gallery-panel:target) .gallery-drawer {
     grid-template-rows: 1fr;
     opacity: 1;
     visibility: visible;
     transition-delay: 0s;
+  }
+
+  /* Every gallery is in the HTML. Native hash links work before JavaScript loads,
+     while hidden panels keep their lazy images from downloading on the homepage. */
+  .gallery-panel {
+    display: none;
+  }
+
+  .portfolio[data-enhanced] .gallery-panel[data-shown],
+  .portfolio:not([data-enhanced]) .gallery-panel:target {
+    display: block;
   }
 
   /* Fades a gallery in when it replaces another in the open drawer. */
