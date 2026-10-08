@@ -1,9 +1,9 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import type { GalleryPreview } from "./GalleryImage"
 import type { GalleryImageData } from "../galleryImages"
 import { cloudinaryImageUrl } from "../cloudinary"
+import { galleryThumbnailUrl } from "../galleryThumbnails"
 
 const LIGHTBOX_WIDTHS = [1200, 1600, 2400] as const
 const controlClassName =
@@ -11,7 +11,7 @@ const controlClassName =
 
 interface GalleryLightboxProps {
   readonly image: GalleryImageData
-  readonly preview?: GalleryPreview
+  readonly previewSrc?: string
   readonly index: number
   readonly count: number
   readonly onPrevious: () => void
@@ -31,7 +31,7 @@ function getViewport() {
 
 export default function GalleryLightbox({
   image,
-  preview,
+  previewSrc,
   index,
   count,
   onPrevious,
@@ -111,7 +111,7 @@ export default function GalleryLightbox({
         <LightboxPhoto
           key={image.src}
           image={image}
-          preview={preview}
+          previewSrc={previewSrc}
           viewport={viewport}
         />
       </div>
@@ -145,16 +145,15 @@ export default function GalleryLightbox({
 
 interface LightboxPhotoProps {
   readonly image: GalleryImageData
-  readonly preview?: GalleryPreview
+  readonly previewSrc?: string
   readonly viewport: ReturnType<typeof getViewport>
 }
 
-function LightboxPhoto({ image, preview, viewport }: LightboxPhotoProps) {
-  const [aspectRatio, setAspectRatio] = useState(preview?.aspectRatio ?? null)
+function LightboxPhoto({ image, previewSrc, viewport }: LightboxPhotoProps) {
   const [previewFailed, setPreviewFailed] = useState(false)
   const [loadedSrc, setLoadedSrc] = useState("")
   const [failedSrc, setFailedSrc] = useState("")
-  const ratio = aspectRatio ?? 1
+  const ratio = image.width / image.height
   const width = Math.min(viewport.width, viewport.height * ratio)
   const sourceWidth =
     LIGHTBOX_WIDTHS.find((size) => size >= width * viewport.pixelRatio) ?? 2400
@@ -169,31 +168,23 @@ function LightboxPhoto({ image, preview, viewport }: LightboxPhotoProps) {
     >
       {/* eslint-disable-next-line @next/next/no-img-element -- Reuse the loaded thumbnail while the display-sized Cloudinary image loads. */}
       <img
-        src={preview?.src ?? cloudinaryImageUrl({ src: image.src, width: 384 })}
+        src={previewSrc ?? galleryThumbnailUrl({ src: image.src, width: 384 })}
         alt=""
         aria-hidden="true"
-        onLoad={(event) => {
-          setAspectRatio(event.currentTarget.naturalWidth / event.currentTarget.naturalHeight)
-        }}
-        onError={() => {
-          setPreviewFailed(true)
-          setAspectRatio(1)
-        }}
+        onError={() => setPreviewFailed(true)}
         className={`absolute inset-0 h-full w-full object-contain ${isLoaded || previewFailed ? "invisible" : ""}`}
       />
-      {aspectRatio !== null && (
-        // eslint-disable-next-line @next/next/no-img-element -- Cloudinary serves a bounded image matched to the available space and pixel density.
-        <img
-          src={fullSrc}
-          alt={image.alt}
-          loading="eager"
-          decoding="async"
-          fetchPriority="high"
-          onLoad={() => setLoadedSrc(fullSrc)}
-          onError={() => setFailedSrc(fullSrc)}
-          className={`absolute inset-0 h-full w-full object-contain ${isLoaded ? "" : "invisible"}`}
-        />
-      )}
+      {/* eslint-disable-next-line @next/next/no-img-element -- Original dimensions let the full image start without waiting for a thumbnail. */}
+      <img
+        src={fullSrc}
+        alt={image.alt}
+        loading="eager"
+        decoding="async"
+        fetchPriority="high"
+        onLoad={() => setLoadedSrc(fullSrc)}
+        onError={() => setFailedSrc(fullSrc)}
+        className={`absolute inset-0 h-full w-full object-contain ${isLoaded ? "" : "invisible"}`}
+      />
       {hasFailed && (
         <p role="status" className="absolute inset-x-0 bottom-0 bg-stone-950/90 p-3 text-center text-sm text-white">
           {previewFailed ? "Image unavailable." : "Full-size image unavailable."}{" "}

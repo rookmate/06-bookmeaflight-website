@@ -1,9 +1,7 @@
 "use client"
 
-import { useRef, useState } from "react"
-import GalleryImage, {
-  type GalleryPreview,
-} from "./GalleryImage"
+import { useEffect, useRef, useState } from "react"
+import GalleryImage from "./GalleryImage"
 import GalleryLightbox from "./GalleryLightbox"
 import type { GalleryImageData } from "../galleryImages"
 
@@ -14,12 +12,28 @@ interface GalleryGridProps {
 
 interface LightboxSelection {
   readonly index: number
-  readonly preview?: GalleryPreview
+  readonly previewSrc?: string
 }
 
 export default function GalleryGrid({ images, active }: GalleryGridProps) {
   const [selection, setSelection] = useState<LightboxSelection | null>(null)
-  const previews = useRef(new Map<string, GalleryPreview>())
+  const previews = useRef(new Map<string, string>())
+  const gridRef = useRef<HTMLDivElement>(null)
+  const [loaded, setLoaded] = useState<ReadonlySet<number>>(() => new Set())
+
+  useEffect(() => {
+    const grid = gridRef.current
+    if (!active || !grid) return
+    const targets = Array.from(grid.children)
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries.filter((entry) => entry.isIntersecting)
+      if (!visible.length) return
+      setLoaded((previous) => new Set([...previous, ...visible.map((entry) => targets.indexOf(entry.target))]))
+      for (const entry of visible) observer.unobserve(entry.target)
+    }, { rootMargin: "160px 0px" })
+    for (const target of targets) observer.observe(target)
+    return () => observer.disconnect()
+  }, [active])
   // A closing drawer can retain its photos, but never its modal or scroll lock.
   if (!active && selection) setSelection(null)
 
@@ -27,18 +41,18 @@ export default function GalleryGrid({ images, active }: GalleryGridProps) {
     const nextIndex = (index + images.length) % images.length
     setSelection({
       index: nextIndex,
-      preview: previews.current.get(images[nextIndex].src),
+      previewSrc: previews.current.get(images[nextIndex].src),
     })
   }
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-5">
+      <div ref={gridRef} className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-5">
         {images.map((image, index) => (
           <GalleryImage
             key={image.src}
-            src={image.src}
-            alt={image.alt}
+            {...image}
+            load={loaded.has(index)}
             onOpen={() => selectImage(index)}
             onPreviewLoad={(preview) => previews.current.set(image.src, preview)}
           />
@@ -48,7 +62,7 @@ export default function GalleryGrid({ images, active }: GalleryGridProps) {
       {active && selection && (
         <GalleryLightbox
           image={images[selection.index]}
-          preview={selection.preview}
+          previewSrc={selection.previewSrc}
           index={selection.index}
           count={images.length}
           onPrevious={() => selectImage(selection.index - 1)}

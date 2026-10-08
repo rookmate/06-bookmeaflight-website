@@ -1,13 +1,16 @@
 import { expect, type Page, test } from "@playwright/test"
+import { portfolioSections } from "../../app/portfolioSections"
 
 // Keep interaction tests independent of Cloudinary availability.
-// Use different aspect ratios to exercise photo sizing when navigating.
+// Full photos retain their real proportions; thumbnail delivery is square.
 test.beforeEach(async ({ context }) => {
   await context.route(/https:\/\/res\.cloudinary\.com\//, async (route) => {
-    const landscape = route.request().url().includes("purse2")
+    const url = route.request().url()
+    const image = portfolioSections.flatMap((section) => section.images).find((image) => url.endsWith(image.src))
+    const square = url.includes("c_fill,")
     await route.fulfill({
       contentType: "image/svg+xml",
-      body: `<svg xmlns="http://www.w3.org/2000/svg" width="${landscape ? 960 : 640}" height="${landscape ? 640 : 960}"><rect width="100%" height="100%" fill="#a8a29e"/></svg>`,
+      body: `<svg xmlns="http://www.w3.org/2000/svg" width="${square ? 640 : image?.width ?? 640}" height="${square ? 640 : image?.height ?? 960}"><rect width="100%" height="100%" fill="#a8a29e"/></svg>`,
     })
   })
 })
@@ -207,14 +210,14 @@ test("photo clicks keep the lightbox open and empty space dismisses it", async (
   await expect(photo).toBeVisible()
   await photo.click()
   await expect(dialog).toBeVisible()
-  // Empty space well inside the photo area, beyond the dialog's padding.
-  const viewport = page.viewportSize()!
-  await page.mouse.click(viewport.width > 1000 ? 100 : viewport.width / 2, viewport.width > 1000 ? viewport.height / 2 : 140)
+  // Click beside the actual photograph, independently of its aspect ratio.
+  const bounds = (await photo.boundingBox())!
+  await page.mouse.click(bounds.x - 8, bounds.y + bounds.height / 2)
   await expect(dialog).toHaveCount(0)
 })
 
 test("thumbnail failures still allow opening the full-size image", async ({ page }) => {
-  await page.route(/res\.cloudinary\.com\/.*c_limit,w_(?:384|512|640|750|828|1080),.*mp-mustard-purse\.jpg/, (route) => route.abort())
+  await page.route(/res\.cloudinary\.com\/.*c_fill,.*mp-mustard-purse\.jpg/, (route) => route.abort())
   await openFashion(page)
   const trigger = page.getByRole("link", { name: "View Mustard purse larger", exact: true }).first()
   await expect(trigger).toContainText("Image unavailable")

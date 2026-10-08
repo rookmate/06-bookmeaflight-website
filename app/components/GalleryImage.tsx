@@ -1,36 +1,25 @@
 "use client"
 
-import Image from "next/image"
 import { useState } from "react"
 import { cloudinaryImageUrl } from "../cloudinary"
+import { galleryThumbnailProps } from "../galleryThumbnails"
 import type { GalleryImageData } from "../galleryImages"
 
-export interface GalleryPreview {
-  readonly src: string
-  readonly aspectRatio: number
-}
-
-const GALLERY_IMAGE_SIZES = [
-  "(min-width: 1536px) 261px",
-  "(min-width: 1280px) 237px",
-  "(min-width: 1024px) 186px",
-  "(min-width: 768px) 172px",
-  "(min-width: 640px) 296px",
-  "45vw",
-].join(", ")
-
 interface GalleryImageProps extends GalleryImageData {
+  readonly load: boolean
   readonly onOpen: () => void
-  readonly onPreviewLoad: (preview: GalleryPreview) => void
+  readonly onPreviewLoad: (src: string) => void
 }
 
 export default function GalleryImage({
   src,
   alt,
+  load,
   onOpen,
   onPreviewLoad,
 }: GalleryImageProps) {
   const [hasError, setHasError] = useState(false)
+  const imageProps = galleryThumbnailProps({ src, alt })
 
   return (
     <a
@@ -60,23 +49,21 @@ export default function GalleryImage({
         </div>
       )}
 
-      {!hasError && (
-        <Image
-          src={src}
+      {/* Native lazy loading can fetch the entire gallery. With scripting enabled,
+          the grid observer admits images only near the viewport. */}
+      {load && !hasError && (
+        // eslint-disable-next-line @next/next/no-img-element -- Responsive props come from next/image, shared with prefetch and the no-JS fallback.
+        <img
+          {...imageProps}
           alt={alt}
-          fill
-          className="object-cover"
-          sizes={GALLERY_IMAGE_SIZES}
-          onLoad={(event) => {
-            const image = event.currentTarget
-            onPreviewLoad({
-              src: image.currentSrc,
-              aspectRatio: image.naturalWidth / image.naturalHeight,
-            })
-          }}
+          onLoad={(event) => onPreviewLoad(event.currentTarget.currentSrc)}
           onError={() => setHasError(true)}
         />
       )}
+      <noscript>
+        {/* eslint-disable-next-line @next/next/no-img-element -- Keep native images and links usable without JavaScript. */}
+        <img {...imageProps} alt={alt} />
+      </noscript>
     </a>
   )
 }
