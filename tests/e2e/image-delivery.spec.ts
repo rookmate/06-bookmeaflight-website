@@ -1,16 +1,20 @@
 import { expect, test } from "@playwright/test"
-import type { Page, TestInfo } from "@playwright/test"
+import type { Page, Response, TestInfo } from "@playwright/test"
 
 function imageTransfers(page: Page) {
-  const transfers: Promise<{ url: string; bytes: number; contentType: string | undefined }>[] = []
-  page.on("response", (response) => {
+  const responses: Response[] = []
+  const onResponse = (response: Response) => {
     if (response.request().resourceType() !== "image" || !response.url().includes("res.cloudinary.com/")) return
-    transfers.push((async () => {
+    responses.push(response)
+  }
+  page.on("response", onResponse)
+  return async () => {
+    page.off("response", onResponse)
+    return Promise.all(responses.map(async (response) => {
       expect(response.status(), response.url()).toBe(200)
       return { url: response.url(), bytes: (await response.body()).byteLength, contentType: response.headers()["content-type"] }
-    })())
-  })
-  return async () => Promise.all(transfers)
+    }))
+  }
 }
 
 async function checkHomepageBudget(page: Page, testInfo: TestInfo) {
@@ -44,7 +48,15 @@ test.describe("wide high-density desktop image budget", () => {
   test("direct gallery entry stays below the thumbnail request and byte budgets", async ({ page }, testInfo) => {
     test.setTimeout(90_000)
     const collect = imageTransfers(page)
-    await page.goto("/#hospitality", { waitUntil: "networkidle" })
+    await page.goto("/#hospitality")
+    // Initial network idle can precede hydration and the observer's first batch.
+    await expect.poll(() => page.locator("#hospitality-cover").evaluate((e) => Math.abs(e.getBoundingClientRect().top - 64)), { timeout: 20_000 }).toBeLessThanOrEqual(1)
+    const photos = page.locator('#hospitality a[aria-haspopup="dialog"] img')
+    await expect.poll(() => photos.evaluateAll((images) => images.length > 0 && images.every((image) => {
+      const img = image as HTMLImageElement
+      return img.complete && img.naturalWidth > 0
+    })), { timeout: 30_000 }).toBe(true)
+    await page.waitForLoadState("networkidle")
     const homepageSources = await page.locator('picture img, nav[aria-label="Portfolio categories"] img')
       .evaluateAll((images) => images.map((image) => (image as HTMLImageElement).currentSrc))
     const transfers = (await collect()).filter((image) => !homepageSources.includes(image.url))
@@ -55,8 +67,7 @@ test.describe("wide high-density desktop image budget", () => {
     const first = transfers.find((image) => image.url.endsWith("kanz-pool-room.jpg"))!
     expect(first.url).toContain("c_fill,w_512,h_512,g_center/")
     expect(first.bytes).toBeLessThanOrEqual(75_000)
-    const photo = page.locator('#hospitality a[aria-haspopup="dialog"] img').first()
-    const ratio = await photo.evaluate((img: HTMLImageElement) => img.naturalWidth / img.naturalHeight)
+    const ratio = await photos.first().evaluate((img: HTMLImageElement) => img.naturalWidth / img.naturalHeight)
     expect(ratio).toBe(1)
   })
 })
