@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises"
 import test from "node:test"
 import { gzipSync } from "node:zlib"
 
-// The full portfolio is in the HTML; CSS and lazy loading defer hidden images.
+// No-JS images stay in the HTML; the hydrated gallery admits nearby thumbnails.
 const routes = [
   {
     pathname: "/",
@@ -77,7 +77,7 @@ for (const route of routes) {
 
     const imageTags = html.match(/<img(?:\s|>)[^>]*>/g) ?? []
     assert.equal(
-      imageTags.filter((tag) => tag.includes("res.cloudinary.com/dnwbkkjpo/image/upload/c_limit,w_")).length,
+      imageTags.filter((tag) => tag.includes("res.cloudinary.com/dnwbkkjpo/image/upload/") && tag.includes("c_limit,w_")).length,
       route.boundedImageCount,
     )
 
@@ -104,18 +104,21 @@ test("homepage has the expected portfolio navigation hierarchy", async () => {
     1,
   )
   assert.equal(countMatches(html, /<picture(?:\s|>)/g), 1)
-  assert.equal(countMatches(html, /<source(?:\s|>)/g), 2)
+  assert.equal(countMatches(html, /<source(?:\s|>)/g), 6)
   assert.equal(
     countMatches(
       html,
       /<source(?=[^>]*\bmedia="\(orientation: landscape\), \(min-width: 768px\)")[^>]*>/g,
     ),
-    1,
+    3,
   )
   assert.equal(
     countMatches(html, /<source(?=[^>]*\bsrcSet=)(?![^>]*\bmedia=)[^>]*>/g),
-    1,
+    3,
   )
+  assert.equal(countMatches(html, /<source[^>]*type="image\/avif"/g), 2)
+  assert.equal(countMatches(html, /<source[^>]*type="image\/jxl"/g), 2)
+  assert.equal(countMatches(html, /<noscript><img\b/g), 85)
   assert.equal(countMatches(html, /<h2(?:\s|>)/g), 3)
   assert.equal(countMatches(html, /<h3(?:\s|>)/g), 0)
 })
@@ -156,7 +159,8 @@ test("sitemap lists canonical portfolio URLs and robots points to it", async () 
 
 test("production routes stay within compressed document and asset budgets", async () => {
   const budgets = {
-    html: 15_000,
+    // Includes original photo dimensions, AVIF sources and the no-JS fallback.
+    html: 18_000,
     javascript: 190_000,
     css: 6_000,
   }

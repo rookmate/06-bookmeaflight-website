@@ -16,7 +16,7 @@ Bookmeaflight is a wellness content creation brand that showcases curated experi
 - **One Page** - The homepage shows one cover photo per category, taken from `app/galleryImages.ts`. Choosing one opens its gallery underneath, and the old category URLs redirect to it. Every gallery is rendered in the HTML and native hash links work without JavaScript
 - **Image Gallery** - Square thumbnails that open a lightbox over a blurred view of the page, with previous/next controls, arrow-key navigation and display-sized images
 - **Smooth Navigation** - Sticky header links that open a category's gallery and mark it while it is open
-- **Image Delivery** - A shared Cloudinary loader serves responsive images directly from the CDN. Hidden galleries use lazy loading; hovering or focusing a category preloads at most five thumbnails unless data saving is enabled
+- **Image Delivery** - The hero offers JPEG XL and AVIF with an automatic-format fallback. Cloudinary crops thumbnails to match the square grid. One observer per open gallery loads photos within 160px of the viewport; native images remain available without JavaScript. Hovering or focusing a category preloads at most five thumbnails unless data saving is enabled
 - **Modern UI** - Clean, minimalist design with Tailwind CSS
 - **Search and Sharing** - Canonical URLs, Open Graph and Twitter previews, sitemap and robots.txt
 
@@ -83,11 +83,18 @@ Use Node.js 24. The `.node-version` file selects it for fnm and GitHub Actions; 
 - `npm run test:static` - Verify an existing production build
 - `npm run test:e2e` - Build and run browser tests in desktop Chromium and mobile WebKit
 
-Install the test browsers once with `npx playwright install chromium webkit`. To run browser tests against a build you already made, use `npx playwright test`. Playwright starts and stops a local production server on port 3186. Tests cover keyboard focus, lightbox navigation and dismissal, browser Back/Forward, image failures, bounded prefetching, responsive navigation, and galleries without JavaScript. Interaction tests mock image responses. `tests/e2e/image-delivery.spec.ts` separately checks real Cloudinary delivery of the hero, a thumbnail and an expanded image, so that test requires network access.
+Install the test browsers once with `npx playwright install chromium webkit`. To run browser tests against a build you already made, use `npx playwright test`. Playwright starts and stops a local production server on port 3186. Tests cover keyboard focus, lightbox navigation and dismissal, browser Back/Forward, image failures, bounded prefetching, responsive navigation, and galleries without JavaScript. Interaction tests mock image responses. `tests/e2e/image-loading.spec.ts` verifies deferred requests, scrolling, responsive sizing and lightbox loading without a cached preview.
 
-GitHub Actions runs the dependency audit, lint, production build, static tests, type checks and browser tests on pushes and pull requests. Failed browser runs include screenshots and traces in the workflow artifacts.
+`tests/e2e/image-delivery.spec.ts` uses the real CDN and requires network access. It checks image decoding and these transfer budgets in Chromium and WebKit:
 
-The canonical production origin is `https://www.bookmeaflight.eu`, matching the live domain redirect. Update `app/siteMetadata.ts` if the production domain changes. The sitemap lists the single canonical homepage. Each category's photos live in `app/galleryImages.ts` as versioned Cloudinary asset paths, and its first photo is the category cover. `app/cloudinary.ts` owns delivery widths, quality and crops; the site does not proxy these images through `/_next/image`.
+- Homepage: four image requests, at most 250 KB for the hero and 350 KB for all photos, including the 3x mobile viewport.
+- Direct Hospitality entry at 1536px and 2x density: at most 25 thumbnail requests and 1.25 MB before scrolling. The first 512px square thumbnail must stay below 75 KB.
+
+These are byte and request limits, not timing thresholds that vary with CI hardware and CDN latency. The browser report includes the measured URLs and byte counts, plus homepage, gallery and lightbox screenshots.
+
+GitHub Actions runs the dependency audit, lint, production build, static tests, type checks and browser tests on pushes and pull requests. Browser reports are uploaded on successful and failed runs; failures also include traces.
+
+The canonical production origin is `https://www.bookmeaflight.eu`, matching the live domain redirect. Update `app/siteMetadata.ts` if the production domain changes. The sitemap lists the single canonical homepage. Each category's photos live in `app/galleryImages.ts` as versioned Cloudinary asset paths with their original dimensions, and its first photo is the category cover. When adding an image, read `output.width` and `output.height` from `https://res.cloudinary.com/dnwbkkjpo/image/upload/fl_getinfo/<versioned-path>`. The lightbox uses those dimensions independently of the square preview, so its full image starts loading immediately. `app/cloudinary.ts` builds delivery URLs; `app/galleryThumbnails.ts` shares responsive thumbnail props between rendering and prefetch. The site does not proxy images through `/_next/image`.
 
 ### Dependency overrides
 
