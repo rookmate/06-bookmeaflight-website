@@ -53,7 +53,7 @@ app/
 
 ## Getting Started
 
-Use Node.js 24. The `.node-version` file selects it for fnm and GitHub Actions; Vercel uses the `engines.node` setting in `package.json`.
+Use Node.js 24.22.1 or a newer Node 24 release. The `.node-version` file pins the minimum patched version for fnm and GitHub Actions; Vercel uses the `engines.node` setting in `package.json`.
 
 1. Install Node 24 and dependencies:
 
